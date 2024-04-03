@@ -4,18 +4,19 @@ import { Link } from "react-router-dom";
 
 function PostCard({ $id, title, featuredImage }) {
   return (
-    <Link to={`/post/${$id}`}>
-      <div className="w-[25rem] bg-white rounded p-2">
-        <div className=" justify-center mb-4">
-          <img
-            src={postServices.getImage(featuredImage)}
-            alt={title}
-            className="rounded"
-          />
+    <Link to={`/post/${$id}`} className="block w-full">
+    <div className="w-full sm:w-[25rem] bg-white rounded p-2">
+        <div className="mb-4">
+            <img
+                src={postServices.getImage(featuredImage)}
+                alt={title}
+                className="rounded w-full"
+            />
         </div>
         <h2 className="text-xl font-bold">{title}</h2>
-      </div>
-    </Link>
+    </div>
+</Link>
+
   );
 }
 

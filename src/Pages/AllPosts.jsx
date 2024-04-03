@@ -14,17 +14,18 @@ function AllPosts() {
   }, []);
 
   return (
-    <div className="w-full h-full mt-10">
-      <>
-        <div className="flex flex-wrap justify-center items-center  sm:justify-start ">
-          {posts.map((post) => (
-            <div key={post.$id} className="p-2 ">
-              <PostCard {...post} />
-            </div>
-          ))}
+<div className="w-full h-full mt-10">
+    <>
+        <div className="flex flex-wrap justify-center sm:justify-start">
+            {posts.map((post) => (
+                <div key={post.$id} className="p-2 w-full sm:w-auto">
+                    <PostCard {...post} />
+                </div>
+            ))}
         </div>
-      </>
-    </div>
+    </>
+</div>
+
   );
 }
 

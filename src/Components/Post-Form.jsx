@@ -76,17 +76,26 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-col">
-            <div className="px-4">
+        <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap ">
+            <div className="w-2/3 px-10 justify-center flex-col items-center">
                 <Input
                     label="Movie Title :"
                     placeholder="Title"
-                    className="mb-4 pl-2 rounded-[5px] text-black"
+                    className="mb-4 mx-2 pl-2 rounded-[5px] text-black"
                     {...register("title", { required: true })}
                 />
+                {/* <Input
+                    label="Slug :"
+                    placeholder="Slug"
+                    className="mb-4 mx-2 pl-2 rounded-[5px] text-black"
+                    {...register("slug", { required: true })}
+                    onInput={(e) => {
+                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                    }}
+                /> */}
                 <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
-            <div className="px-4">
+            <div className="w-1/3 px-2">
                 <Input
                     label="Featured Image :"
                     type="file"
@@ -96,7 +105,11 @@ export default function PostForm({ post }) {
                 />
                 {post && (
                     <div className="w-full mb-4">
-                        <img src={postServices.getImage(post.featuredImage)} alt={post.title} className="rounded-lg" />
+                        <img
+                            src={postServices.getImage(post.featuredImage)}
+                            alt={post.title}
+                            className="rounded-lg"
+                        />
                     </div>
                 )}
                 <Select
@@ -111,4 +124,4 @@ export default function PostForm({ post }) {
             </div>
         </form>
     );
-}
+} 
