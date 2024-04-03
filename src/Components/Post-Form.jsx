@@ -76,39 +76,39 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap ">
-        <div className="w-full md:w-2/3 px-4 md:px-10 justify-center flex-col items-center mb-4 md:mb-0">
-            <Input
-                label="Movie Title :"
-                placeholder="Title"
-                className="mb-4 pl-2 rounded-[5px] text-black w-full"
-                {...register("title", { required: true })}
-            />
-            <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
-        </div>
-        <div className="w-full md:w-1/3 px-4">
-            <Input
-                label="Featured Image :"
-                type="file"
-                className="mb-4 rounded italic w-full"
-                accept="image/png, image/jpg, image/jpeg, image/gif"
-                {...register("image", { required: post })}
-            />
-            {post && (
-                <div className="w-full mb-4">
-                    <img src={postServices.getImage(post.featuredImage)} alt={post.title} className="rounded-lg" />
-                </div>
-            )}
-            <Select
-                options={["Active", "Inactive"]}
-                label="Status"
-                className="mb-4 w-full"
-                {...register("status", { required: true })}
-            />
-            <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
-                {post ? "Update" : "Submit"}
-            </Button>
-        </div>
-    </form>
+        <form onSubmit={handleSubmit(submit)} className="flex flex-col">
+            <div className="px-4">
+                <Input
+                    label="Movie Title :"
+                    placeholder="Title"
+                    className="mb-4 pl-2 rounded-[5px] text-black"
+                    {...register("title", { required: true })}
+                />
+                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+            </div>
+            <div className="px-4">
+                <Input
+                    label="Featured Image :"
+                    type="file"
+                    className="mb-4 rounded italic"
+                    accept="image/png, image/jpg, image/jpeg, image/gif"
+                    {...register("image", { required: post })}
+                />
+                {post && (
+                    <div className="w-full mb-4">
+                        <img src={postServices.getImage(post.featuredImage)} alt={post.title} className="rounded-lg" />
+                    </div>
+                )}
+                <Select
+                    options={["Active", "Inactive"]}
+                    label="Status"
+                    className="mb-4"
+                    {...register("status", { required: true })}
+                />
+                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                    {post ? "Update" : "Submit"}
+                </Button>
+            </div>
+        </form>
     );
 }
