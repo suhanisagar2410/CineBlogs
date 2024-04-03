@@ -31,6 +31,20 @@ function HomePage() {
             </div>
         )
     }
+
+    if(posts.length === 0 && userStatus == true){
+        return   <div className="w-full py-8 mt-4 text-center">
+        <>
+            <div className="flex flex-wrap">
+                <div className="p-2 w-full">
+                    <h1 className="text-2xl font-bold text-white">
+                        No Posts Available
+                    </h1>
+                </div>
+            </div>
+        </>
+    </div>
+    }
     return (
         <div className='w-full py-8'>
             <>
@@ -46,4 +60,4 @@ function HomePage() {
     )
 }
 
-export default HomePage
+export default HomePage;

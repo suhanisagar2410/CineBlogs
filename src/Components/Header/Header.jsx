@@ -44,7 +44,7 @@ function Header() {
         <nav className='flex'>
           <div className='mr-4'>
             <Link to='/'>
-              <img src="download (4).png" alt="" className='w-[3rem]' />
+              <img src="Mega-Blogs-Header.png" alt="" className='w-[8rem]' />
 
               </Link>
           </div>

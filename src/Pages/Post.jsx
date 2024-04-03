@@ -9,17 +9,21 @@ import authService from "../AppWrite/Appwrite";
 
 export default function Post() {
   const [post, setPost] = useState(null);
+  const [postcontent, setPostContent] = useState("");
   const { slug } = useParams();
   const navigate = useNavigate();
-
-  
-
 
   useEffect(() => {
     if (slug) {
       postServices.getPost(slug).then((post) => {
         if (post) setPost(post);
         else navigate("/");
+
+        if(post.content) {
+          setPostContent( parse(post.content).props.children.props.children.props.children);
+        } else {
+          setPostContent(null);
+        }
       });
     } else navigate("/");
   }, [slug, navigate]);
@@ -32,18 +36,15 @@ export default function Post() {
       }
     });
   };
-  
 
-//   const currentUser = postServices.getPost(slug);
+  //   const currentUser = postServices.getPost(slug);
   const userData = useSelector((state) => state.Auth.userData);
 
   let isAuthor = post && userData ? post.userId === userData.$id : false;
-  console.log(userData);
+  console.log(postcontent);
 
-  console.log(post);
-  
-  
-  
+  // console.log(post);
+
 
   return post ? (
     <div className="py-8">
@@ -58,20 +59,20 @@ export default function Post() {
           {isAuthor ? (
             <div className="absolute right-6 top-6 text-black">
               <Link to={`/edit-post/${post.$id}`}>
-                <Button  className="mr-3 bg-white text-black">
-                  Edit
-                </Button>
+                <Button className="mr-3 bg-white text-black">Edit</Button>
               </Link>
-              <Button  className="bg-white text-black" onClick={deletePost}>
+              <Button className="bg-white text-black" onClick={deletePost}>
                 Delete
               </Button>
             </div>
           ) : null}
         </div>
-        <div className="w-full mb-6">
-          <h1 className="text-3xl font-bold text-white text-center">{post.title}</h1>
+        <div className="w-full mb-6 text-white">
+          <h1 className="text-3xl font-bold text-white text-center">
+            {post.title}
+          </h1>
         </div>
-        <div className="browser-css text-white text-center">{parse(post.content)}</div>
+        <div className="text-center text-white">{postcontent}</div>
       </>
     </div>
   ) : null;
