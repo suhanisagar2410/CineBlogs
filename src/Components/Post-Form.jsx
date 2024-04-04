@@ -4,6 +4,7 @@ import { Button, Input, RTE, Select } from "./index";
 import postServices from "../AppWrite/CreatePost";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import parse from "html-react-parser"
 
 
 export default function PostForm({ post }) {
@@ -23,6 +24,8 @@ export default function PostForm({ post }) {
     const submit = async (data) => {
         if (post) {
             const file = data.image[0] ? await postServices.uploadFile(data.image[0]) : null;
+            console.log(data);
+            // console.log(parse(data.content.props.children));
 
             if (file) {
                 postServices.deleteFile(post.featuredImage);
@@ -44,7 +47,7 @@ export default function PostForm({ post }) {
             if (file) {
                 const fileId = file.$id;
                 data.featuredImage = fileId;
-                const dbPost = await postServices.createPost({ ...data ,  userId: userData.$id}   );
+                const dbPost = await postServices.createPost({ ...data  ,   userId: userData.$id}   );
 
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`)
@@ -76,8 +79,8 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap ">
-            <div className="w-2/3 px-10 justify-center flex-col items-center">
+        <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap justify-center items-center">
+            <div className="sm:w-2/3 px-10 justify-center flex-col items-center w-full">
                 <Input
                     label="Movie Title :"
                     placeholder="Title"
@@ -93,9 +96,9 @@ export default function PostForm({ post }) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 /> */}
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE  label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
-            <div className="w-1/3 px-2">
+            <div className="sm:w-1/3 w-full px-2 justify-center items-center">
                 <Input
                     label="Featured Image :"
                     type="file"
@@ -104,7 +107,7 @@ export default function PostForm({ post }) {
                     {...register("image", { required: post })}
                 />
                 {post && (
-                    <div className="w-full mb-4">
+                    <div className="w-full mb-4 justify-center items-center">
                         <img
                             src={postServices.getImage(post.featuredImage)}
                             alt={post.title}
@@ -115,10 +118,10 @@ export default function PostForm({ post }) {
                 <Select
                     options={["Active", "Inactive"]}
                     label="Status"
-                    className="mb-4"
+                    className="mb-4 sm:w-full w-[21rem] "
                     {...register("status", { required: true })}
                 />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="sm:w-full w-[5rem]">
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>

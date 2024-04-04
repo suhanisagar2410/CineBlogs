@@ -5,13 +5,18 @@ import postServices from "../AppWrite/CreatePost";
 import { Button } from "../Components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
-import authService from "../AppWrite/Appwrite";
+
+
 
 export default function Post() {
   const [post, setPost] = useState(null);
-  const [postcontent, setPostContent] = useState("");
+  const [postcontent, setPostContent] = useState();
   const { slug } = useParams();
   const navigate = useNavigate();
+  
+ 
+  
+
 
   useEffect(() => {
     if (slug) {
@@ -19,8 +24,9 @@ export default function Post() {
         if (post) setPost(post);
         else navigate("/");
 
-        if(post.content) {
-          setPostContent( parse(post.content).props.children.props.children.props.children);
+        if(post) {
+          setPostContent(parse(post.content).props.children);
+          console.log(postcontent);
         } else {
           setPostContent(null);
         }
@@ -41,15 +47,17 @@ export default function Post() {
   const userData = useSelector((state) => state.Auth.userData);
 
   let isAuthor = post && userData ? post.userId === userData.$id : false;
+  // console.log(parse(post.content));
   console.log(postcontent);
 
-  // console.log(post);
+
+  
 
 
   return post ? (
-    <div className="py-8">
+    <div className="py-8 bg-black">
       <>
-        <div className="text-white w-full flex justify-center mb-4 relative  rounded-xl p-2">
+        <div className="text-white w-full h-full flex justify-center mb-4 relative  rounded-xl p-2">
           <img
             src={postServices.getImage(post.featuredImage)}
             alt={post.title}
@@ -72,7 +80,7 @@ export default function Post() {
             {post.title}
           </h1>
         </div>
-        <div className="text-center text-white">{postcontent}</div>
+        <p className="text-center text-white">{ postcontent }</p>
       </>
     </div>
   ) : null;
