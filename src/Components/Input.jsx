@@ -9,10 +9,10 @@ function Input({
   return (
     <div className='w-full '>
       {
-        label ? <label className='text-2xl font-semibold'>{label}</label> : null
+        label ? <label className='text-[18px] font-medium  mr-2' >{label}</label> : null
       }
 
-      <input type={type} className={`${className}`} {...props} ref={ref}/>
+      <input type={type}  className={`${className} border-none outline-none`} {...props} ref={ref}/>
     </div>
   )
 }

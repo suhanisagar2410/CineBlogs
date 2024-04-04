@@ -11,6 +11,7 @@ function Select({
     <div className='w-full'>
         {label && <label htmlFor={id} className=''></label>}
         <select
+        defaultValue="Public"
         {...props}
         id={id}
         ref={ref}

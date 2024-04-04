@@ -80,13 +80,16 @@ export default function PostForm({ post }) {
 
     return (
         <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap justify-center items-center">
-            <div className="sm:w-2/3 px-10 justify-center flex-col items-center w-full">
+            <div className="sm:w-2/3 px-10 justify-center flex-col items-center w-full overflow-hidden">
+                <div className="flex justify-center items-center mb-3">
+            <label className='text-[20px] font-semibold w-[10rem] ' > Movie-Title :</label>
                 <Input
-                    label="Movie Title :"
+                   
                     placeholder="Title"
-                    className="mb-4 mx-2 pl-2 rounded-[5px] text-black"
+                    className="mx-2 pl-2 rounded-[5px] text-black"
                     {...register("title", { required: true })}
                 />
+                </div>
                 {/* <Input
                     label="Slug :"
                     placeholder="Slug"
@@ -96,7 +99,11 @@ export default function PostForm({ post }) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 /> */}
-                <RTE  label="Write Your Blog Here :" name="content" control={control} defaultValue={getValues("content")} />
+                {/* <RTE  label="Write Your Blog Here :" name="content" control={control} defaultValue={getValues("content")} /> */}
+                <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here :</label>
+                <div className="w-[500px] h-[500px]">
+                    <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })}/>
+                </div>
             </div>
             <div className="sm:w-1/3 w-full px-2 justify-center items-center">
                 <Input
@@ -107,7 +114,7 @@ export default function PostForm({ post }) {
                     {...register("image", { required: post })}
                 />
                 {post && (
-                    <div className="w-full mb-4 justify-center items-center">
+                    <div className="w-[15rem] mb-4 justify-center items-center">
                         <img
                             src={postServices.getImage(post.featuredImage)}
                             alt={post.title}
@@ -118,10 +125,11 @@ export default function PostForm({ post }) {
                 <Select
                     options={["Public", "Private"]}
                     label="Status"
+                    defaultValue="public"
                     className="mb-4 sm:w-full w-[21rem] "
                     {...register("status", { required: true })}
                 />
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="sm:w-full w-[5rem]">
+                <Button type="submit" bgColor={post ? "bg-white text-black" : undefined} className="sm:w-full w-[5rem]">
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>

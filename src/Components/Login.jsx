@@ -42,13 +42,11 @@ function Login() {
     <div
     className='flex items-center justify-center w-full'
     >
-        <div className={`mx-auto w-full max-w-lg bg-white rounded-xl p-10 border border-black/10`}>
+        <div className={`mx-auto w-full max-w-lg shadow shadow-white bg-white rounded-xl p-10 border border-white/5`}>
         <div className="mb-2 flex justify-center">
-                    <span className="inline-block w-full max-w-[100px]">
-                        Pratik
-                    </span>
+                    
         </div>
-        <h2 className="text-center text-2xl font-bold leading-tight">Sign in to your account</h2>
+        <h2 className="text-center text-2xl font-bold leading-tight mb-3">Sign in to your account</h2>
         <p className="mt-2 text-center text-base text-black/60">
                     Don&apos;t have any account?&nbsp;
                     <Link
@@ -64,6 +62,7 @@ function Login() {
                 <Input
                 label="Email: "
                 placeholder="Enter your email"
+                className="ml-2"
                 type="email"
                 {...register("email", {
                     required: true,
@@ -75,6 +74,7 @@ function Login() {
                 />
                 <Input
                 label="Password: "
+                className="ml-2"
                 type="password"
                 placeholder="Enter your password"
                 {...register("password", {
@@ -83,7 +83,8 @@ function Login() {
                 />
                 <Button
                 type="submit"
-                className="w-full"
+                bgColor="black"
+                className="w-full bg-black text-white font-semibold text-[1.2rem]"
                 >Sign in</Button>
             </div>
         </form>
