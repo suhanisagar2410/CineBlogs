@@ -16,19 +16,19 @@ export default function RTE({ name, control, label, defaultValue = "" }) {
         control={control}
         render={({ field: { onChange } }) => (
           <Editor
-            apiKey="pja3xq631i2zk4i5txqc0cu86eil7sqdo6vn7ry19m8pxllk"
+            apiKey="h9am4e45vqu0mw3jyh6g959iaqzu33ag0hyb57q9v6wpd9jt"
             initialValue={defaultValue}
             init={{
               initialValue: defaultValue,
               height: 500,
               menubar: true,
+
               plugins: [
                 "image",
                 "advlist",
                 "autolink",
                 "lists",
                 "link",
-                "image",
                 "charmap",
                 "preview",
                 "anchor",
@@ -46,8 +46,7 @@ export default function RTE({ name, control, label, defaultValue = "" }) {
               ],
               toolbar:
                 "undo redo | blocks | image | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat | help",
-              content_style:
-                "text",
+              content_style: "text",
             }}
             onEditorChange={onChange}
           />

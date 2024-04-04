@@ -96,7 +96,7 @@ export default function PostForm({ post }) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 /> */}
-                <RTE  label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE  label="Write Your Blog Here :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
             <div className="sm:w-1/3 w-full px-2 justify-center items-center">
                 <Input
@@ -116,7 +116,7 @@ export default function PostForm({ post }) {
                     </div>
                 )}
                 <Select
-                    options={["Active", "Inactive"]}
+                    options={["Public", "Private"]}
                     label="Status"
                     className="mb-4 sm:w-full w-[21rem] "
                     {...register("status", { required: true })}

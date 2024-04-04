@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import postServices from "../AppWrite/CreatePost";
 import { PostCard } from "../Components";
+import { useSelector } from 'react-redux'
 
 function AllPosts() {
   const [posts, setPosts] = useState([]);
+  const userStatus = useSelector((state) => state.Auth.status)
 
   useEffect(() => {
     postServices.getPosts([]).then((posts) => {
@@ -12,6 +14,20 @@ function AllPosts() {
       }
     });
   }, []);
+
+  if(posts.length === 0 && userStatus == true){
+    return   <div className="w-full py-8 mt-4 text-center">
+    <>
+        <div className="flex flex-wrap">
+            <div className="p-2 w-full">
+                <h1 className="text-2xl font-bold text-white">
+                    No Posts Available
+                </h1>
+            </div>
+        </div>
+    </>
+</div>
+}
 
   return (
 <div className="w-full h-full mt-10">
