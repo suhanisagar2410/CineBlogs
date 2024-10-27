@@ -49,7 +49,7 @@ function HomePage() {
     return (
         <div className='w-full py-8'>
             <>
-                <div className='flex flex-wrap sm:justify-start justify-center items-center'>
+                <div className='ml-2 flex flex-wrap sm:justify-start justify-center items-center'>
                     {posts.map((post) => (
                         <div key={post.$id} className='p-2 '>
                             <PostCard {...post} />
