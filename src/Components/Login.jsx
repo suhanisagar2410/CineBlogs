@@ -5,18 +5,20 @@ import {Button, Input} from "./index"
 import {useDispatch, useSelector} from "react-redux"
 import authService from "../AppWrite/Appwrite"
 import {useForm} from "react-hook-form"
+import { ScaleLoader } from "react-spinners";
 
 function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {register, handleSubmit} = useForm()
     const [error, setError] = useState("")
-   
+    const [isLoading, setLoading] = useState(false)
 
     const login = async(data) => {
         setError("")
-        
+
         try {
+            setLoading(true)
             let session = await authService.login(data)
             if (session) {
                 const userData = await authService.getUser()
@@ -26,17 +28,28 @@ function Login() {
                 }
                 console.log(userData);
                 console.log(myUserData);
-               
-               
+                setLoading(false)
                 navigate("/")
+
             }
         } catch (error) {
             setError(error.message)
+            setLoading(false)
         }
     }
 
     const myUserData = useSelector((state)=> state.Auth.status)
   
+    if (isLoading) {
+        return (
+          <div className="flex items-center justify-center">
+            <div className="mt-[10rem]">
+            <ScaleLoader color='#ffffff' height={50} />
+            </div>
+    
+          </div>
+        )
+      }
 
   return (
     <div

@@ -90,16 +90,6 @@ export default function PostForm({ post }) {
                     {...register("title", { required: true })}
                 />
                 </div>
-                {/* <Input
-                    label="Slug :"
-                    placeholder="Slug"
-                    className="mb-4 mx-2 pl-2 rounded-[5px] text-black"
-                    {...register("slug", { required: true })}
-                    onInput={(e) => {
-                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                    }}
-                /> */}
-                {/* <RTE  label="Write Your Blog Here :" name="content" control={control} defaultValue={getValues("content")} /> */}
                 <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here :</label>
                 <div className="w-[500px] h-[500px]">
                     <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })}/>

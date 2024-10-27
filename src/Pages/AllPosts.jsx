@@ -16,9 +16,9 @@ function AllPosts() {
   }, []);
 
   if(posts.length === 0 && userStatus == true){
-    return   <div className="w-full py-8 mt-4 text-center">
+    return   <div className="w-full h-full py-8 mt-4 text-center bg-black">
     <>
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap h-full bg-black">
             <div className="p-2 w-full">
                 <h1 className="text-2xl font-bold text-white">
                     No Posts Available
@@ -32,7 +32,7 @@ function AllPosts() {
   return (
 <div className="w-full h-full mt-10">
     <>
-        <div className="flex flex-wrap justify-center sm:justify-start">
+        <div className="flex h-full bg-black flex-wrap justify-center sm:justify-start">
             {posts.map((post) => (
                 <div key={post.$id} className="p-2 w-full sm:w-auto">
                     <PostCard {...post} />
