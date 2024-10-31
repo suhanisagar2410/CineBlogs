@@ -3,10 +3,9 @@ import { useDispatch } from "react-redux";
 import Appwrite from "../../AppWrite/Appwrite";
 import { Logout } from "../../Store/AuthSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function LogoutBtn() {
-
-
   const dispatch = useDispatch();
   const navigate = useNavigate()
   
@@ -14,7 +13,14 @@ function LogoutBtn() {
     Appwrite.logOut().then(() => {
       dispatch(Logout());
       navigate("/")
-
+      toast.success("Logout Successfully...", {
+        autoClose: 1000,
+        style: {
+            backgroundColor: "#2e1065",
+            color: "#ffffff",
+          },
+          hideProgressBar: true,
+      });
     });
 
   return (

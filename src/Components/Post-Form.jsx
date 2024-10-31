@@ -4,8 +4,7 @@ import { Button, Input, RTE, Select } from "./index";
 import postServices from "../AppWrite/CreatePost";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import parse from "html-react-parser"
-
+import { toast } from "react-toastify";
 
 export default function PostForm({ post }) {
     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
@@ -19,41 +18,56 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.Auth.userData);
-    console.log(userData);
-
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await postServices.uploadFile(data.image[0]) : null;
-            console.log(data);
-            // console.log(parse(data.content.props.children));
+        try {
 
-            if (file) {
-                postServices.deleteFile(post.featuredImage);
-            }
+            if (post) {
+                const file = data.image[0] ? await postServices.uploadFile(data.image[0]) : null;
 
-            const dbPost = await postServices.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
+                if (file) {
+                    postServices.deleteFile(post.featuredImage);
+                }
 
-            if (dbPost) {
-                
-                navigate(`/post/${dbPost.$id}`)
-                
-            }
-        } else {
-            const file = await postServices.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await postServices.createPost({ ...data  ,   userId: userData.$id}   );
+                const dbPost = await postServices.updatePost(post.$id, {
+                    ...data,
+                    featuredImage: file ? file.$id : undefined,
+                });
 
                 if (dbPost) {
+                    toast.success("Blog Updated Successfully...", {
+                        autoClose: 1000,
+                        style: {
+                            backgroundColor: "#2e1065",
+                            color: "#ffffff",
+                        },
+                        hideProgressBar: true,
+                    });
                     navigate(`/post/${dbPost.$id}`)
-                   
+                }
+            } else {
+                const file = await postServices.uploadFile(data.image[0]);
+
+                if (file) {
+                    const fileId = file?.$id;
+                    data.featuredImage = fileId;
+                    const dbPost = await postServices.createPost({ ...data, userId: userData.$id });
+
+                    if (dbPost) {
+                        toast.success("Blog Posted Successfully...", {
+                            autoClose: 1000,
+                            style: {
+                                backgroundColor: "#2e1065",
+                                color: "#ffffff",
+                            },
+                            hideProgressBar: true,
+                        });
+                        navigate(`/post/${dbPost.$id}`)
+                    }
                 }
             }
+        } catch (error) {
+            console.log(error)
+            toast('Error Occured...')
         }
     };
 
@@ -82,17 +96,17 @@ export default function PostForm({ post }) {
         <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap justify-center items-center">
             <div className="sm:w-2/3 px-10 justify-center flex-col items-center w-full overflow-hidden">
                 <div className="flex justify-center items-center mb-3">
-            <label className='text-[20px] font-semibold w-[10rem] ' > Movie-Title :</label>
-                <Input
-                   
-                    placeholder="Title"
-                    className="mx-2 pl-2 rounded-[5px] text-black"
-                    {...register("title", { required: true })}
-                />
+                    <label className='text-[20px] font-semibold w-[10rem] ' > Movie-Title :</label>
+                    <Input
+
+                        placeholder="Title"
+                        className="mx-2 pl-2 rounded-[5px] text-black"
+                        {...register("title", { required: true })}
+                    />
                 </div>
                 <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here :</label>
                 <div className="w-[500px] h-[500px]">
-                    <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })}/>
+                    <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })} />
                 </div>
             </div>
             <div className="sm:w-1/3 w-full px-2 justify-center items-center">

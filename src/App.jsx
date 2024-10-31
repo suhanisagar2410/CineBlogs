@@ -5,6 +5,8 @@ import authService from "./AppWrite/Appwrite"
 import {Login, Logout} from "./Store/AuthSlice"
 import { Footer, Header } from './Components'
 import { Outlet } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -26,6 +28,7 @@ function App() {
     <div className='mix-h-screen flex flex-wrap content-between bg-black text-black w-full'>
       <div className='w-full h-screen '>
         <Header />
+        <ToastContainer/>
         <main>
         <Outlet />
         </main>

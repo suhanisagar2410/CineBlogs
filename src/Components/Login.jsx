@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux"
 import authService from "../AppWrite/Appwrite"
 import {useForm} from "react-hook-form"
 import { ScaleLoader } from "react-spinners";
+import { toast } from 'react-toastify'
 
 function Login() {
     const navigate = useNavigate()
@@ -30,6 +31,14 @@ function Login() {
                 console.log(myUserData);
                 setLoading(false)
                 navigate("/")
+                toast.success("Login Successfully...", {
+                    autoClose: 1000,
+                    style: {
+                        backgroundColor: "#2e1065",
+                        color: "#ffffff",
+                      },
+                      hideProgressBar: true,
+                  });
 
             }
         } catch (error) {
