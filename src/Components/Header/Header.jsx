@@ -36,15 +36,13 @@ function Header() {
       active: authStatus,
   },
   ]
-
-
   return (
     <header className='py-3 px-16 shadow bg-black text-white'>
       <>
         <nav className='flex'>
           <div className='mr-4'>
             <Link to='/'>
-              <img src="Mega-Blogs-Header.png" alt="" className='w-[6rem]' />
+              <img src="https://res.cloudinary.com/dbmn2pyi4/image/upload/v1730130777/Mega-Blogs-Header_b8myrb.png" alt="" className='w-[6rem]' />
               </Link>
           </div>
           <ul className='flex ml-auto'>

@@ -3,12 +3,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import postServices from "../AppWrite/CreatePost";
 import { Button } from "../Components";
-
 import { useSelector } from "react-redux";
 
 export default function Post() {
   const [post, setPost] = useState(null);
-
+  const [isAuthor, setAuthor] = useState(false)
   const { slug } = useParams();
   const navigate = useNavigate();
 
@@ -17,24 +16,33 @@ export default function Post() {
       postServices.getPost(slug).then((post) => {
         if (post) setPost(post);
         else navigate("/");
+
       });
     } else navigate("/");
   }, [slug, navigate]);
 
+  const checkIsAuthor = async ()=>{
+    const userData = await useSelector((state) => state.Auth.userData);
+    let author = post?.userId === userData.$id ? true : false;
+    setAuthor(author)
+  }
+  checkIsAuthor()
   const deletePost = () => {
     postServices.deletePost(post.$id).then((status) => {
       if (status) {
         postServices.deleteFile(post.featuredImage);
+        toast.success("Post Deleted Successfully...", {
+          autoClose: 1000,
+          style: {
+              backgroundColor: "#2e1065",
+              color: "#ffffff",
+            },
+            hideProgressBar: true,
+        });
         navigate("/");
       }
     });
   };
-
-  //   const currentUser = postServices.getPost(slug);
-  const userData = useSelector((state) => state.Auth.userData);
-
-  let isAuthor = post && userData ? post.userId === userData.$id : false;
-  // console.log(parse(post.content));
 
   return post ? (
     <div className="py-8 bg-black">
@@ -46,7 +54,7 @@ export default function Post() {
             className="rounded-xl w-[20rem ] h-[20rem] border p-2"
           />
 
-          {isAuthor ? (
+          {isAuthor && (
             <div className="absolute right-6 top-6 text-black">
               <Link to={`/edit-post/${post.$id}`}>
                 <Button className="mr-3 bg-white text-black">Edit</Button>
@@ -55,7 +63,7 @@ export default function Post() {
                 Delete
               </Button>
             </div>
-          ) : null}
+          )}
         </div>
         <div className="w-full mb-6 text-white">
           <h1 className="text-3xl font-bold text-white text-center">
