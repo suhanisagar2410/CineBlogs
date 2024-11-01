@@ -13,4 +13,4 @@ RUN npm install
 # Define the entry point for the container
 CMD ["node", "index.js"]
 
-EXPOSE 3000
+EXPOSE 8080
