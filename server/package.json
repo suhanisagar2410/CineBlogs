@@ -9,6 +9,9 @@
     "start": "node ./index.js",
     "build": "echo 'No build step required'"
   },
+  "engines": {
+  "node": "22.x"
+},
   "author": "",
   "license": "ISC",
   "description": "",

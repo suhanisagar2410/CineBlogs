@@ -61,12 +61,23 @@ const login = async (req, res) => {
         }
         return errorResponse(res, "Incorrect password");
     } catch (error) {
-        return catchResponse(res, "Error occurred login user", error.message);
+        return catchResponse(res, "Error occurred in login user", error.message);
     }
+}
+
+const logOut = async (req, res)=>{
+try {
+    const user = await User.findOneAndUpdate({email: req.user.email}, {token: ""})
+    if(!user) return errorResponse(res, "User not updated");
+    return successResponse({ res, message: "User logged out successfully", data: {} });
+} catch (error) {
+    return catchResponse(res, "Error occurred in logout user", error.message);
+}
 }
 
 
 export {
     createUser,
-    login
+    login,
+    logOut
 }
