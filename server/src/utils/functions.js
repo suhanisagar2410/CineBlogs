@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 export const successResponse = ({ res, message, data }) => {
     return res.status(200).json({ message, data })
 }
@@ -22,3 +23,15 @@ export const generateAccessToken = ({ username, email }) => {
         }
     );
 };
+
+export const bcryptPassCompare = async (passToBeMatched, password)=>{
+   try {
+    if (!passToBeMatched || !password) {
+        throw new Error("Both passToBeMatched and password must be provided");
+    }
+    const result = await bcrypt.compare(passToBeMatched, password)
+    return result
+   } catch (error) {
+    console.log(error)
+   }
+}
