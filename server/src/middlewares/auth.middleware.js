@@ -11,8 +11,7 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        const user = await User.findOne({email : decoded.email});
+        const user = await User.findOne({token: token});
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
