@@ -33,19 +33,6 @@ const createPost = async (req, res) => {
     }
 }
 
-const getAllPosts = async (req, res)=>{
-    try {
-        const posts = await Post.find({status: true})
-        if(!posts) return errorResponse(res, "Error while getting posts");
-
-        if(posts.length == 0) return errorResponse(res, "No post found");
-        
-        return successResponse({ res, message: "Posts get successfully", data: posts });
-    } catch (error) {
-        return catchResponse(res, "Error occurred in get posts", error);
-    }
-} 
-
 const getAllPostsOfUser = async (req, res)=>{
     try {
         const userId = req.user._id
@@ -58,7 +45,41 @@ const getAllPostsOfUser = async (req, res)=>{
     } catch (error) {
         return catchResponse(res, "Error occurred in get posts", error);
     }
-} 
+}
+
+const getAllPosts = async (req, res) => {
+    try {
+      const category = req.query.category;
+      const limit = req.query.limit;
+      const page = req.query.page;
+      const search = req.query.search;
+      const regex = new RegExp(search, "i");
+      const filters = {};
+      if (category) filters.category = category;
+  
+      if (search)
+        filters.$or = [
+          { title: { $regex: regex } },
+          { category: { $regex: regex } }
+        ];
+  
+      const postCount = (await Post.find(filters)).length;
+  
+      const posts = await Post.find(filters)
+        .skip((page - 1) * limit)
+        .limit(limit);
+      if (!posts)
+        return res.json({
+          error: `Post Not Found By Filters`,
+        });
+  
+      return res.status(200).json({ posts, postCount });
+    } catch (error) {
+      return res.json({
+        error: `Error Occured While Fetching Data By Filters`,
+      });
+    }
+  };
 
 export {
     createPost,
