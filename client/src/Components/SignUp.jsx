@@ -1,34 +1,72 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import authService from "../AppWrite/Appwrite.js";
 import { Link, useNavigate } from "react-router-dom";
 import { Login } from "../Store/AuthSlice";
-import { Button, Input } from "./index.js";
+import { Button } from "./index.js";
 import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { ScaleLoader } from "react-spinners";
+import MuiInput from "../utility/CustomeInput.jsx";
 
 function Signup() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
 
-  const create = async (data) => {
-    setError("");
-    setLoading(true)
-    try {
-      const userData = await authService.createAccount(data);
-      if (userData) {
-        const userData = await authService.getUser();
-        if (userData) dispatch(Login(userData));
-        navigate("/");
-        setLoading(false)
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: ''
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Full name is required'),
+      email: Yup.string()
+        .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
+        'Please enter a valid email address'
+        )
+        .required('Email is required'),
+      password: Yup.string()
+        .min(8, 'Password must be at least 8 characters long')
+        .required('Password is required')
+    }),
+    onSubmit: async (values) => {
+      setError("");
+      setLoading(true);
+      try {
+        const userData = await authService.createAccount(values);
+        if (userData) {
+          const userData = await authService.getUser();
+          if (userData) dispatch(Login(userData));
+          navigate("/");
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setError(error.message);
     }
-  };
+  });
+
+  const inputFields = [
+    {
+      label: "Full Name",
+      name: "name",
+      type: "text",
+    },
+    {
+      label: "Email",
+      name: "email",
+      type: "email",
+    },
+    {
+      label: "Password",
+      name: "password",
+      type: "password",
+    }
+  ];
 
   if (isLoading) {
     return (
@@ -36,18 +74,14 @@ function Signup() {
         <div className="mt-[10rem]">
           <ScaleLoader color='#ffffff' height={50} />
         </div>
-
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
-        <div className="mb-2 flex justify-center">
-
-        </div>
-        <h2 className="text-center text-2xl font-bold leading-tight">
+        <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl">
           Sign up to create account
         </h2>
         <p className="mt-2 text-center text-base text-black/60">
@@ -61,40 +95,22 @@ function Signup() {
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
-        <form onSubmit={handleSubmit(create)}>
+        <form onSubmit={formik.handleSubmit}>
           <div className="space-y-5 mt-5">
-            <Input
-              label="Full Name: "
-              placeholder="Enter your full name"
-              {...register("name", {
-                required: true,
-              })}
-            />
-            <Input
-              label="Email: "
-              placeholder="Enter your email"
-              type="email"
-              {...register("email", {
-                required: true,
-                validate: {
-                  matchPatern: (value) =>
-                    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                    "Email address must be a valid address",
-                },
-              })}
-            />
-            <Input
-              label="Password: "
-              type="password"
-              placeholder="Enter your password"
-              {...register("password", {
-                required: true,
-              })}
-            />
+            {inputFields.map(({ label, name, type }) => (
+              <MuiInput
+                key={name}
+                label={label}
+                type={type}
+                {...formik.getFieldProps(name)}
+                error={formik.touched[name] && Boolean(formik.errors[name])}
+                helperText={formik.touched[name] && formik.errors[name]}
+              />
+            ))}
             <Button
               type="submit"
               bgColor="black"
-              className="w-full bg-black text-white font-semibold text-[1.2rem]"
+              className="w-full bg-black text-white font-semibold text-[1.2rem] py-3"
             >
               Create Account
             </Button>
