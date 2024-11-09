@@ -27,10 +27,7 @@ const postschema = new Schema(
     status:{
         type: Boolean,
         required: true,
-    },
-    refreshToken: {
-      type: String,
-    },
+    }
   },
   { timestamps: true }
 );

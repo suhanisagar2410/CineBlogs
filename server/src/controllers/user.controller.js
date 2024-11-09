@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js"
 import joi from "joi"
+import mongoose from "mongoose"
 import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
@@ -9,8 +10,8 @@ const userValidationSchema = joi.object({
 const createUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-
         const { error } = userValidationSchema.validate(req.body);
+
         if (error) return errorResponse(res, error.message);
 
         const userAlreadyExists = await User.findOne({ username });
@@ -47,7 +48,7 @@ const login = async (req, res) => {
         const result = await bcryptPassCompare(password, user.password)
         if (result === false) return errorResponse(res, "Incorrect password");
         const username = user.username
-        if(result === true){
+        if (result === true) {
             const token = generateAccessToken({ username, email })
 
             const newUser = await User.findOneAndUpdate(
@@ -56,7 +57,7 @@ const login = async (req, res) => {
                 { new: true }
             ).select("-password");
             if (!newUser) return errorResponse(res, "Token not updated");
-    
+
             return successResponse({ res, message: "User login successfully", data: newUser });
         }
         return errorResponse(res, "Incorrect password");
@@ -65,19 +66,40 @@ const login = async (req, res) => {
     }
 }
 
-const logOut = async (req, res)=>{
-try {
-    const user = await User.findOneAndUpdate({email: req.user.email}, {token: ""})
-    if(!user) return errorResponse(res, "User not updated");
-    return successResponse({ res, message: "User logged out successfully", data: {} });
-} catch (error) {
-    return catchResponse(res, "Error occurred in logout user", error.message);
+const logOut = async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate({ email: req.user.email }, { token: "" })
+        if (!user) return errorResponse(res, "User not updated");
+        return successResponse({ res, message: "User logged out successfully", data: {} });
+    } catch (error) {
+        return catchResponse(res, "Error occurred in logout user", error.message);
+    }
 }
+
+const getUserByIdValidationSchema = joi.object({
+    userId: joi.string().custom((value, helpers) => {
+        if (!mongoose.isValidObjectId(value)) {
+            return helpers.message("Invalid userId");
+        }
+        return value;
+})
+})
+const getUserById = async (req, res) => {
+    try {
+        const { error } = await getUserByIdValidationSchema.validate(req.body)
+        if (error) return errorResponse(res, error.message);
+        const user = await User.findOne({_id: req.body.userId}, '-password -__v')
+        if (!user) return errorResponse(res, "User found");
+        return successResponse({ res, message: "User found successfully", data: user });
+    } catch (error) {
+        return catchResponse(res, "Error occurred in get user by id", error.message);
+    }
 }
 
 
 export {
     createUser,
     login,
-    logOut
+    logOut,
+    getUserById
 }

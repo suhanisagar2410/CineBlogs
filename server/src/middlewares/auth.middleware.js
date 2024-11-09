@@ -13,7 +13,7 @@ export const authenticateToken = async (req, res, next) => {
     try {
         const user = await User.findOne({token: token});
         if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'User not found , please check auth token!...' });
         }
         req.user = user;
         next(); 
