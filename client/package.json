@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.2.1",
     "@tinymce/tinymce-react": "^4.3.2",
     "appwrite": "^13.0.2",
+    "axios": "^1.7.7",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",

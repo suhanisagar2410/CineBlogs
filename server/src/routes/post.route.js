@@ -4,7 +4,7 @@ import { createPost, getAllPosts, getAllPostsOfUser } from "../controllers/post.
 import { upload } from "../middlewares/multer.middleware.js"
 const postRouter = Router()
 
-postRouter.route("/create").post(authenticateToken, upload.single('image'), createPost)
+postRouter.route("/create").post(authenticateToken, createPost)
 postRouter.route("/get-posts").get(authenticateToken, getAllPosts)
 postRouter.route("/get-userposts").get(authenticateToken, getAllPostsOfUser)
 

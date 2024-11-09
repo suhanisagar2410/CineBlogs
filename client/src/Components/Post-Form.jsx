@@ -1,11 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, RTE, Select } from "./index";
+import { Button, Select } from "./index";
 import postServices from "../AppWrite/CreatePost";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
+import axios from "axios";
 export default function PostForm({ post }) {
     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
         defaultValues: {
@@ -15,59 +15,36 @@ export default function PostForm({ post }) {
             status: post?.status || "active",
         },
     });
-
     const navigate = useNavigate();
+    const movie = useSelector((state) => state.Auth.movie);
+    useEffect(() => {
+        if (!movie) navigate('/add-post')
+    }, [movie])
+    if (!movie) navigate('/add-post')
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByc2xrdmZmbmZmZiIsImVtYWlsIjoicHJhdGlrZnZkdmR2c3N2dnZAZ21haWwuY29tIiwiaWF0IjoxNzMwOTk5NzY1LCJleHAiOjE3MzE0MzE3NjV9.1qfRo_g7Vit3jGyXhCMvLRkOmuZjgBBj6sj8OBS2KRU'
     const userData = useSelector((state) => state.Auth.userData);
+    console.log(userData)
+    console.log(movie)
     const submit = async (data) => {
         try {
-
-            if (post) {
-                const file = data.image[0] ? await postServices.uploadFile(data.image[0]) : null;
-
-                if (file) {
-                    postServices.deleteFile(post.featuredImage);
-                }
-
-                const dbPost = await postServices.updatePost(post.$id, {
-                    ...data,
-                    featuredImage: file ? file.$id : undefined,
-                });
-
-                if (dbPost) {
-                    toast.success("Blog Updated Successfully...", {
-                        autoClose: 1000,
-                        style: {
-                            backgroundColor: "#2e1065",
-                            color: "#ffffff",
-                        },
-                        hideProgressBar: true,
-                    });
-                    navigate(`/post/${dbPost.$id}`)
-                }
-            } else {
-                const file = await postServices.uploadFile(data.image[0]);
-
-                if (file) {
-                    const fileId = file?.$id;
-                    data.featuredImage = fileId;
-                    const dbPost = await postServices.createPost({ ...data, userId: userData.$id });
-
-                    if (dbPost) {
-                        toast.success("Blog Posted Successfully...", {
-                            autoClose: 1000,
-                            style: {
-                                backgroundColor: "#2e1065",
-                                color: "#ffffff",
-                            },
-                            hideProgressBar: true,
-                        });
-                        navigate(`/post/${dbPost.$id}`)
+            const post = await axios.post(
+                `${import.meta.env.VITE_SERVER_URI}/api/v1/posts/create`,
+                {
+                    userId: "6724998a782abbc307bf8e94",
+                    title: movie.Title,
+                    content: data.content,
+                    status: true ,
+                    image: movie.Poster
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     }
                 }
-            }
+            );
+            console.log(post)
         } catch (error) {
-            console.log(error)
-            toast('Error Occured...')
+            console.log(error.response.data)
         }
     };
 
@@ -93,39 +70,17 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex text-white flex-wrap justify-center items-center">
-            <div className="sm:w-2/3 px-10 justify-center flex-col items-center w-full overflow-hidden">
-                <div className="flex justify-center items-center mb-3">
-                    <label className='text-[20px] font-semibold w-[10rem] ' > Movie-Title :</label>
-                    <Input
+        <form onSubmit={handleSubmit(submit)} className="flex w-full bg-black text-white flex-wrap flex-col justify-center items-center">
+            <div className="sm:w-full flex flex-col justify-center items-center w-full overflow-hidden">
 
-                        placeholder="Title"
-                        className="mx-2 pl-2 rounded-[5px] text-black"
-                        {...register("title", { required: true })}
-                    />
-                </div>
-                <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here :</label>
-                <div className="w-[500px] h-[500px]">
+                <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here for {movie?.Title} :</label>
+                <div className="">
                     <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })} />
                 </div>
             </div>
+
             <div className="sm:w-1/3 w-full px-2 justify-center items-center">
-                <Input
-                    label="Featured Image :"
-                    type="file"
-                    className="mb-4 rounded italic"
-                    accept="image/png, image/jpg, image/jpeg, image/gif"
-                    {...register("image", { required: post })}
-                />
-                {post && (
-                    <div className="w-[15rem] mb-4 justify-center items-center">
-                        <img
-                            src={postServices.getImage(post.featuredImage)}
-                            alt={post.title}
-                            className="rounded-lg"
-                        />
-                    </div>
-                )}
+
                 <Select
                     options={["Public", "Private"]}
                     label="Status"

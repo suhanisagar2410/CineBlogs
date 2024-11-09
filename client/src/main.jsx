@@ -11,8 +11,8 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import HomePage from "./Pages/HomePage.jsx";
-import { Login } from "./Components/index.js";
-
+import { Login, PostForm } from "./Components/index.js";
+import SearchMovie from "./Pages/SearchMovie.jsx";
 import AddPost from "./Pages/AddPost.jsx";
 import SignUpPage from "./Pages/SignUpPage.jsx";
 import EditPosts from "./Pages/EditPosts.jsx";
@@ -28,10 +28,11 @@ const router = createBrowserRouter(
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/add-post" element={<AddPost />} />
+      <Route path="/add-post" element={<SearchMovie />} />
       <Route path="/all-posts" element={<AllPosts />} />
       <Route path="/edit-post/:slug" element={<EditPosts />} />
       <Route path="/post/:slug" element={<Post />} />
+      <Route path="/add-content" element={<AddPost />} />
     </Route>
   )
 );

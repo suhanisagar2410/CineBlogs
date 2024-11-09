@@ -8,23 +8,21 @@ const postValidation = Joi.object({
     userId: Joi.string().required(),
     title: Joi.string().required(),
     content: Joi.string().min(5).required(),
-    status: Joi.boolean().required()
+    status: Joi.boolean().required(),
+    image: Joi.string().required(),
 })
 const createPost = async (req, res) => {
     try {
         const { error } = postValidation.validate(req.body)
         if (error) return errorResponse(res, error.message);
-        const { userId, title, content, status } = req.body;
+        const { userId, title, content, status, image } = req.body;
 
         if(userId != req.user._id) return errorResponse(res, "User is not the same");
 
         const user = await User.findOne({_id: userId});
         if (!user) return errorResponse(res, "User not found");
 
-        const imageUrl = await uploadOnCloudinry(req.file.path);
-        if(!imageUrl)  return errorResponse(res, "Image not uploaded on cludinary");
-
-        const post = await Post.create({ userId, title, content, image:imageUrl.url , status })
+        const post = await Post.create({ userId, title, content, image , status })
         if (!post) return errorResponse(res, "Error while creating post");
 
         return successResponse({ res, message: "Post created successfully", data: post });

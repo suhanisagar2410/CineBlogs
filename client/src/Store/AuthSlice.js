@@ -1,38 +1,9 @@
-// import { createSlice } from "@reduxjs/toolkit";
-
-// const initialState = {
-//   status: false,
-//   userData: null,
-// };
-
-// export const AuthSlice = createSlice({
-//   name: "Auth",
-//   initialState,
-//   reducers: {
-    
-//         Login: (state, action) => {
-//           (state.status = true), (state.userData = action.payload);
-//         },
-      
-    
-//         Logout: (state, action) => {
-//         (state.status = false),
-//           (state.userData = null),
-//           console.log(action.payload);
-//       },
-//   }
-// });
-
-// export default AuthSlice.reducer;
-// export const { Logout, Login } = AuthSlice.actions;
-
-
-
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     status : false,
-    userData: null
+    userData: null,
+    movie: null
 }
 
 const AuthSlice = createSlice({
@@ -46,10 +17,16 @@ const AuthSlice = createSlice({
         Logout: (state) => {
             state.status = false;
             state.userData = null;
+        },
+        AddMovie: (state, action ) => {
+            state.movie = action.payload;
+        },
+        RemoveMovie: (state)=>{
+            state.movie = null;
         }
      }
 })
 
-export const {Login, Logout} = AuthSlice.actions;
+export const {Login, Logout, AddMovie, RemoveMovie} = AuthSlice.actions;
 
 export default AuthSlice.reducer;

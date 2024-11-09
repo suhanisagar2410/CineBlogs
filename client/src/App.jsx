@@ -25,8 +25,8 @@ function App() {
   }, [])
   
   return !loading ? (
-    <div className='mix-h-screen flex flex-wrap content-between bg-black text-black w-full'>
-      <div className='w-full h-screen '>
+    <div className='min-h-screen flex flex-wrap content-between bg-black text-black w-full'>
+      <div className='w-full min-h-screen mb-5'>
         <Header />
         <ToastContainer/>
         <main>
