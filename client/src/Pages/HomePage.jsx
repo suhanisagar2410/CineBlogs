@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
 import postServices from '../AppWrite/CreatePost'
 import { PostCard} from '../Components'
 import { useSelector } from 'react-redux'

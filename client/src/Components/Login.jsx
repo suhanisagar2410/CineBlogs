@@ -1,118 +1,122 @@
-import React, {useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import { Login as authlogin  } from '../Store/AuthSlice'
-import {Button, Input} from "./index"
-import {useDispatch, useSelector} from "react-redux"
-import authService from "../AppWrite/Appwrite"
-import {useForm} from "react-hook-form"
-import { ScaleLoader } from "react-spinners";
-import { toast } from 'react-toastify'
+/* eslint-disable react/no-unescaped-entities */
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Login as authlogin } from '../Store/AuthSlice';
+import { Button } from './index';
+import { useDispatch } from 'react-redux';
+import authService from '../AppWrite/Appwrite';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { ScaleLoader } from 'react-spinners';
+import MuiInput from '../utility/CustomeInput';
 
 function Login() {
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const {register, handleSubmit} = useForm()
-    const [error, setError] = useState("")
-    const [isLoading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const [isLoading, setLoading] = useState(false);
 
-    const login = async(data) => {
-        setError("")
-
-        try {
-            setLoading(true)
-            let session = await authService.login(data)
-            if (session) {
-                const userData = await authService.getUser()
-                if(userData)
-                {
-                    dispatch(authlogin(userData));
-                }
-                console.log(userData);
-                console.log(myUserData);
-                setLoading(false)
-                navigate("/")
-                toast.success("Login Successfully...", {
-                    autoClose: 1000,
-                    style: {
-                        backgroundColor: "#2e1065",
-                        color: "#ffffff",
-                      },
-                      hideProgressBar: true,
-                  });
-
-            }
-        } catch (error) {
-            setError(error.message)
-            setLoading(false)
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required')
+        .matches(
+          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+          'Please enter a valid email address'
+        ),
+      password: Yup.string()
+        .min(8, 'Password must be at least 8 characters long')
+        .required('Password is required'),
+    }),
+    onSubmit: async (values) => {
+      setError('');
+      setLoading(true);
+      try {
+        const session = await authService.login(values);
+        if (session) {
+          const userData = await authService.getUser();
+          if (userData) {
+            dispatch(authlogin(userData));
+            navigate('/');
+          }
         }
-    }
-
-    const myUserData = useSelector((state)=> state.Auth.status)
-  
-    if (isLoading) {
-        return (
-          <div className="flex items-center justify-center">
-            <div className="mt-[10rem]">
-            <ScaleLoader color='#ffffff' height={50} />
-            </div>
-    
-          </div>
-        )
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
+    },
+  });
+
+  const inputFields = [
+    {
+      label: 'Email',
+      name: 'email',
+      type: 'email',
+    },
+    {
+      label: 'Password',
+      name: 'password',
+      type: 'password',
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="mt-[10rem]">
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div
-    className='flex items-center justify-center w-full'
-    >
-        <div className={`mx-auto w-full max-w-lg shadow shadow-white bg-white rounded-xl p-10 border border-white/5`}>
-        <div className="mb-2 flex justify-center">
-                    
-        </div>
-        <h2 className="text-center text-2xl font-bold leading-tight mb-3">Sign in to your account</h2>
+    <div className="flex items-center justify-center w-full px-4 sm:px-6 lg:px-8">
+      <div className={`mx-auto w-full max-w-lg bg-white rounded-xl p-10 border border-white/10`}>
+        <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl mb-3">
+          Sign in to your account
+        </h2>
         <p className="mt-2 text-center text-base text-black/60">
-                    Don&apos;t have any account?&nbsp;
-                    <Link
-                        to="/signup"
-                        className="font-medium text-primary transition-all duration-200 hover:underline"
-                    >
-                        Sign Up
-                    </Link>
+          Don't have an account?&nbsp;
+          <Link
+            to="/signup"
+            className="font-medium text-primary transition-all duration-200 hover:underline"
+          >
+            Sign Up
+          </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-        <form onSubmit={handleSubmit(login)} className='mt-8'>
-            <div className='space-y-5'>
-                <Input
-                label="Email: "
-                placeholder="Enter your email"
-                className="ml-2"
-                type="email"
-                {...register("email", {
-                    required: true,
-                    validate: {
-                        matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                        "Email address must be a valid address",
-                    }
-                })}
-                />
-                <Input
-                label="Password: "
-                className="ml-2"
-                type="password"
-                placeholder="Enter your password"
-                {...register("password", {
-                    required: true,
-                })}
-                />
-                <Button
-                type="submit"
-                bgColor="black"
-                className="w-full bg-black text-white font-semibold text-[1.2rem]"
-                >Sign in</Button>
-            </div>
+        
+        <form onSubmit={formik.handleSubmit} className="mt-8">
+          <div className="space-y-5">
+            {inputFields.map(({ label, name, type }) => (
+              <MuiInput
+                key={name}
+                label={label}
+                type={type}
+                {...formik.getFieldProps(name)}
+                error={formik.touched[name] && Boolean(formik.errors[name])}
+                helperText={formik.touched[name] && formik.errors[name]}
+              />
+            ))}
+            <Button
+              type="submit"
+              bgColor="black"
+              className="w-full bg-black text-white font-semibold text-[1.2rem] py-3"
+            >
+              Sign In
+            </Button>
+          </div>
         </form>
-        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;
