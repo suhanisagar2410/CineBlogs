@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./index.js ",
     "start": "node ./index.js",
-    "build": "echo 'No build step required'"
+    "build": "yarn install && echo 'No build step required'"
+
   },
   "engines": {
     "node": "22.x"
