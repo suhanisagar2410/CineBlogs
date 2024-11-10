@@ -1,13 +1,14 @@
 import { useState } from "react";
-import authService from "../AppWrite/Appwrite.js";
 import { Link, useNavigate } from "react-router-dom";
-import { Login } from "../Store/AuthSlice";
-import { Button } from "./index.js";
+import { Login } from "../Store/AuthSlice"; 
+import { Button } from "./index";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ScaleLoader } from "react-spinners";
-import MuiInput from "../utility/CustomeInput.jsx";
+import MuiInput from "../utility/CustomeInput"; 
+import { toast } from "react-toastify"; 
+import { signupUser } from "../AppWrite/Apibase";
 
 function Signup() {
   const navigate = useNavigate();
@@ -17,43 +18,49 @@ function Signup() {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      email: '',
-      password: ''
+      username: "",
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Full name is required'),
+      username: Yup.string().required("Full name is required"),
       email: Yup.string()
-        .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
-        'Please enter a valid email address'
+        .matches(
+          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+          "Please enter a valid email address"
         )
-        .required('Email is required'),
+        .required("Email is required"),
       password: Yup.string()
-        .min(8, 'Password must be at least 8 characters long')
-        .required('Password is required')
+        .min(8, "Password must be at least 8 characters long")
+        .required("Password is required"),
     }),
     onSubmit: async (values) => {
       setError("");
       setLoading(true);
+
       try {
-        const userData = await authService.createAccount(values);
-        if (userData) {
-          const userData = await authService.getUser();
-          if (userData) dispatch(Login(userData));
-          navigate("/");
-        }
+        const { userData, token } = await signupUser(values);
+
+        dispatch(Login({ user: userData, token }));
+
+        localStorage.setItem("authToken", token);
+
+        toast.success("User created successfully!");
+        navigate("/login");
       } catch (error) {
-        setError(error.message);
+        console.error("Signup error:", error);
+        setError(error.message || "An error occurred!");
+        toast.error(error.message || "Signup failed");
       } finally {
         setLoading(false);
       }
-    }
+    },
   });
 
   const inputFields = [
     {
       label: "Full Name",
-      name: "name",
+      name: "username",
       type: "text",
     },
     {
@@ -65,14 +72,14 @@ function Signup() {
       label: "Password",
       name: "password",
       type: "password",
-    }
+    },
   ];
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">
         <div className="mt-[10rem]">
-          <ScaleLoader color='#ffffff' height={50} />
+          <ScaleLoader color="#ffffff" height={50} />
         </div>
       </div>
     );
@@ -80,8 +87,8 @@ function Signup() {
 
   return (
     <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
-        <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl">
+      <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10">
+        <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl mb-3">
           Sign up to create account
         </h2>
         <p className="mt-2 text-center text-base text-black/60">

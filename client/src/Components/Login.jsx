@@ -1,52 +1,51 @@
-/* eslint-disable react/no-unescaped-entities */
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Login as authlogin } from '../Store/AuthSlice';
-import { Button } from './index';
-import { useDispatch } from 'react-redux';
-import authService from '../AppWrite/Appwrite';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { ScaleLoader } from 'react-spinners';
-import MuiInput from '../utility/CustomeInput';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Login as authlogin } from "../Store/AuthSlice";
+import { Button } from "./index";
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { ScaleLoader } from "react-spinners";
+import MuiInput from "../utility/CustomeInput";
+import { toast } from "react-toastify";
+import { loginUser } from "../AppWrite/Apibase";
 
 function Login() {
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required')
+        .email("Invalid email address")
+        .required("Email is required")
         .matches(
           /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-          'Please enter a valid email address'
+          "Please enter a valid email address"
         ),
       password: Yup.string()
-        .min(8, 'Password must be at least 8 characters long')
-        .required('Password is required'),
+        .min(8, "Password must be at least 8 characters long")
+        .required("Password is required"),
     }),
     onSubmit: async (values) => {
-      setError('');
+      setError("");
       setLoading(true);
+
       try {
-        const session = await authService.login(values);
-        if (session) {
-          const userData = await authService.getUser();
-          if (userData) {
-            dispatch(authlogin(userData));
-            navigate('/');
-          }
-        }
+        const { userData, token } = await loginUser(values);
+
+        dispatch(authlogin({ user: userData, token }));
+
+        navigate("/");
       } catch (error) {
         setError(error.message);
+        toast.error(error.message);
       } finally {
         setLoading(false);
       }
@@ -55,14 +54,14 @@ function Login() {
 
   const inputFields = [
     {
-      label: 'Email',
-      name: 'email',
-      type: 'email',
+      label: "Email",
+      name: "email",
+      type: "email",
     },
     {
-      label: 'Password',
-      name: 'password',
-      type: 'password',
+      label: "Password",
+      name: "password",
+      type: "password",
     },
   ];
 
@@ -78,7 +77,7 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center w-full px-4 sm:px-6 lg:px-8">
-      <div className={`mx-auto w-full max-w-lg bg-white rounded-xl p-10 border border-white/10`}>
+      <div className="mx-auto w-full max-w-lg bg-white rounded-xl p-10 border border-white/10">
         <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl mb-3">
           Sign in to your account
         </h2>
@@ -92,7 +91,7 @@ function Login() {
           </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-        
+
         <form onSubmit={formik.handleSubmit} className="mt-8">
           <div className="space-y-5">
             {inputFields.map(({ label, name, type }) => (
