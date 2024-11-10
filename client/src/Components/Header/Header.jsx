@@ -9,7 +9,6 @@ function Header() {
   const authStatus = useSelector((state) => state.Auth.status);
   const userData = useSelector((state) => state.Auth.userData);
   const navigate = useNavigate();
-
   const navItems = [
     {
       name: 'Home',

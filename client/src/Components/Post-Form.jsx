@@ -20,34 +20,51 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const movie = useSelector((state) => state.Auth.movie);
+    const userData = useSelector((state) => state.Auth.userData);
+    const token = localStorage.getItem("authToken");
+    console.log(userData)
     useEffect(() => {
-        if (!movie) navigate('/add-post')
-    }, [movie])
-    if (!movie) navigate('/add-post')
-    const token = localStorage.getItem('authToken')
+        if (!movie) navigate('/add-post');
+    }, [movie, navigate]);
+
     const submit = async (data) => {
         try {
-            const post = await axios.post(
-                `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
-                {
-                    userId: "673095e331505be871075859",
-                    title: movie.Title,
-                    content: data.content,
-                    status: data.status == 'Public' ? true : false ,
-                    image: movie.Poster
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
+            const postData = {
+                userId: userData?._id,
+                title: movie.Title,
+                content: data.content,
+                status: data.status == "Public" ? true : false,
+                image: movie.Poster
+            };
+            
+            if (post) {
+                const response = await axios.put(
+                    `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/update-post/${post._id}`,
+                    postData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
                     }
-                }
-            );
-            console.log(post.data.data._id)
-            if(post.status == 200){
-                navigate(`/post/${post.data.data._id}`)
+                );
+                navigate(`/post/${response.data.data._id}`); 
+                toast.success("Post updated successfully!");
+            } else {
+                const response = await axios.post(
+                    `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
+                    postData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                navigate(`/post/${response.data.data._id}`); 
+                toast.success("Post created successfully!");
             }
         } catch (error) {
-            console.log(error.response.data)
+            toast.error("An error occurred. Please try again.");
+            console.error(error);
         }
     };
 
@@ -65,9 +82,9 @@ export default function PostForm({ post }) {
 
             <div className="sm:w-1/3 w-full px-2 justify-center items-center">
                 <Select
-                    options={["active", "inactive"]}
+                    options={["Public", "Private"]}
                     label="Status"
-                    defaultValue={post?.status ? "active" : "inactive"}
+                    defaultValue={"Public"}
                     className="mb-4 sm:w-full w-[21rem]"
                     {...register("status", { required: true })}
                 />

@@ -4,31 +4,31 @@ import { PostCard } from "../Components";
 import { useSelector } from "react-redux";
 import { getAllPostsByUser } from "../AppWrite/Apibase";
 import { useNavigate } from "react-router-dom";
+import { ScaleLoader } from "react-spinners";
+
 function AllPosts() {
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate()
   const userStatus = useSelector((state) => state.Auth.status);
   const authToken = localStorage.getItem("authToken");
 
   const getPosts = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await getAllPostsByUser(authToken);
-      
       if (response) {
         setPosts(response);
       } else {
         setPosts([]);
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setError("Error fetching posts.");
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
-    
+
   };
 
   useEffect(() => {
@@ -40,7 +40,27 @@ function AllPosts() {
   }, [authToken]);
 
 
-  if (posts.length === 0) {
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
+        </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+
+      </div>
+    );
+  }
+
+
+  if (posts.length === 0 && userStatus == true) {
     return (
       <div className="w-full h-full py-8 mt-4 flex justify-center items-center bg-black from-gray-800 to-black text-center">
         <div className="max-w-lg">
@@ -48,7 +68,7 @@ function AllPosts() {
             No Posts Yet
           </h1>
           <p className="text-lg text-gray-300 mb-6">
-            Start sharing your thoughts with the world! Click the <span onClick={()=> navigate('/add-post')} className="text-indigo-400 cursor-pointer">Add Post</span> button to get started.
+            Start sharing your thoughts with the world! Click the <span onClick={() => navigate('/add-post')} className="text-indigo-400 cursor-pointer">Add Post</span> button to get started.
           </p>
           <p className="text-sm text-gray-500">
             Whether it's your first blog or a new idea, we're excited to see what you create.
@@ -57,34 +77,16 @@ function AllPosts() {
       </div>
     );
   }
-  
-
-  if (isLoading) {
-    return (
-      <div className="w-full h-full py-8 mt-4 text-center bg-black">
-        <h1 className="text-2xl font-bold text-white">Loading posts...</h1>
-      </div>
-    );
-  }
-
-  if (posts.length === 0 && userStatus === true) {
-    return (
-      <div className="w-full h-full py-8 mt-4 text-center bg-black">
-        <div className="flex flex-wrap h-full bg-black">
-          <div className="p-2 w-full">
-            <h1 className="text-2xl font-bold text-white">No Posts Available</h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="w-full h-full mt-10">
-      <div className="ml-10 flex h-full bg-black flex-wrap justify-center sm:justify-start">
-        {posts.map((post) => (
-          <div key={post._id} className="p-5 w-full sm:w-auto">
-            <PostCard $id={post._id} title={post.title} image={post.image} />
+    <div className="w-full bg-gradient-to-b from-black via-purple-950 to-black py-12">
+      <div className="ml-[2rem] h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
+        {posts?.map((post) => (
+          <div
+            key={post._id}
+            className="p-4 w-full sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
+          >
+            <PostCard {...post} />
           </div>
         ))}
       </div>

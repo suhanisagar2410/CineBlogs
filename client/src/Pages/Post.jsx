@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../Components";
 import { useSelector } from "react-redux";
+import { ScaleLoader } from "react-spinners";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -11,7 +12,10 @@ export default function Post() {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.Auth.userData);
   const authToken = localStorage.getItem("authToken")
+  const [isLoading, setLoading] = useState(false);
+
   const getPost = async () => {
+    setLoading(true)
     if (postId) {
       await axios
         .get(
@@ -23,6 +27,7 @@ export default function Post() {
         .then((data) => setPost(data.data.data))
         .catch((error) => console.log(error));
     }
+    setLoading(false)
   };
 
   useEffect(() => {
@@ -30,6 +35,26 @@ export default function Post() {
   }, []);
 
   const userStatus = useSelector((state) => state.Auth.status);
+
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
+        </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+
+      </div>
+    );
+  }
 
   if (userStatus !== true) {
     return (
@@ -52,8 +77,7 @@ export default function Post() {
     <div className="py-10 bg-gradient-to-b from-black via-purple-900 to-black min-h-screen flex flex-col items-center">
       <div className="w-full max-w-[80rem] flex flex-col sm:flex-row items-center gap-8 text-white">
 
-        {/* Image Container with Sticky Position */}
-        <div className="sm:w-[15rem] w-full h-full sm:h-[15rem] rounded-lg overflow-hidden shadow-md flex justify-center items-center relative">
+        <div className="sm:w-[15rem] w-full h-full sm:h-[15rem] overflow-hidden flex justify-center items-center relative">
           <img
             src={post?.image}
             alt={post?.title}
@@ -61,9 +85,6 @@ export default function Post() {
           />
         </div>
 
-
-
-        {/* Post Content */}
         <div className="sm:w-[60%] w-full text-white">
           <h1 className="text-2xl font-extrabold text-center sm:text-left text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 leading-tight mt-6 transform hover:scale-105 transition-all duration-300 ease-in-out">
             {post.title}:-

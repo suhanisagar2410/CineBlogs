@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-// import postServices from '../AppWrite/CreatePost.js';
 import { PostCard } from '../Components';
 import { useSelector } from 'react-redux';
 import { ScaleLoader } from "react-spinners";
@@ -8,7 +7,6 @@ import { getAllPosts } from '../AppWrite/Apibase';
 function HomePage() {
     const [posts, setPosts] = useState([]);
     const [isLoading, setLoading] = useState(false);
-    const [loadingComplete, setLoadingComplete] = useState(false);
 
     const getPosts = async () => {
         const authToken = localStorage.getItem("authToken");
@@ -19,11 +17,36 @@ function HomePage() {
     };
 
     useEffect(() => {
-        getPosts();
-        setLoadingComplete(true);
+        const fetchPosts = async () => {
+            setLoading(true);
+            await getPosts();
+            setLoading(false);
+        };
+
+        fetchPosts();
     }, []);
 
     const userStatus = useSelector((state) => state.Auth.status);
+
+    if (isLoading) {
+        return (
+            <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+                <div className="p-4 w-full flex flex-col justify-center items-center">
+                    <h1 className="text-4xl font-semibold text-white">
+                        "Patience, the Best Stories Are Worth the Wait."
+                    </h1>
+                    <p className="text-lg mt-2 text-gray-300">
+                        We’re brewing something great! Check back soon for fresh content.
+                    </p>
+                </div>
+                <div className='mt-[5rem]'>
+                    <ScaleLoader color="#ffffff" height={50} />
+                </div>
+
+            </div>
+        );
+    }
+
 
     if (posts.length === 0 && userStatus !== true) {
         return (
@@ -34,7 +57,7 @@ function HomePage() {
                             "Unlock a World of Stories, One Post at a Time."
                         </h1>
                         <p className="text-lg mt-2 text-gray-300">
-                            Sign in and start exploring. Dive into the world of endless content!
+                            We’re brewing something great! Check back soon for fresh content.
                         </p>
                     </div>
                 </div>
