@@ -10,15 +10,12 @@ const postschema = new Schema(
     title: {
       type: String,
       required: true,
-      lowercase: true,
       trim: true,
       index: true,
     },
     category: {
       type: String,
       // required: true,
-      lowercase: true,
-      trim: true,
       // index: true,
     },
     content: {

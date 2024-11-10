@@ -1,86 +1,93 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { PostCard } from "../Components";
+import { useEffect, useState } from 'react';
+// import postServices from '../AppWrite/CreatePost.js';
+import { PostCard } from '../Components';
+import { useSelector } from 'react-redux';
 import { ScaleLoader } from "react-spinners";
-import { getPosts } from "../AppWrite/Apibase";
+import { getAllPosts } from '../AppWrite/Apibase';
 
 function HomePage() {
-  const [posts, setPosts] = useState([]);
-  
-  const [isLoading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [posts, setPosts] = useState([]);
+    const [isLoading, setLoading] = useState(false);
+    const [loadingComplete, setLoadingComplete] = useState(false);
 
-  const userStatus = useSelector((state) => state.Auth.status);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const { posts } = await getPosts(1, 10);
-
-        setPosts(posts);
-      } catch (error) {
-        setError("Error fetching posts");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+    const getPosts = async () => {
+        const authToken = localStorage.getItem("authToken");
+        const posts = await getAllPosts(authToken);
+        if (posts) {
+            setPosts(posts);
+        }
     };
 
-    fetchPosts();
-  }, []);
+    useEffect(() => {
+        getPosts();
+        setLoadingComplete(true);
+    }, []);
 
-  if (isLoading) {
+    const userStatus = useSelector((state) => state.Auth.status);
+
+    if (posts.length === 0 && userStatus !== true) {
+        return (
+            <div className="w-full py-12 mt-4 text-center">
+                <div className="flex flex-wrap justify-center">
+                    <div className="p-4 w-full">
+                        <h1 className="text-4xl font-bold text-white tracking-tight">
+                            "Unlock a World of Stories, One Post at a Time."
+                        </h1>
+                        <p className="text-lg mt-2 text-gray-300">
+                            Sign in and start exploring. Dive into the world of endless content!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (posts.length === 0 && userStatus === true && isLoading) {
+        return (
+            <div className="w-full py-12 mt-4 text-center">
+                <div className="flex items-center justify-center">
+                    <div className="mt-[10rem]">
+                        <ScaleLoader color="#ffffff" height={50} />
+                    </div>
+                </div>
+                <div className="flex flex-wrap justify-center">
+                    <div className="p-4 w-full">
+                        <h1 className="text-4xl font-semibold text-white">
+                            "Patience, the Best Stories Are Worth the Wait."
+                        </h1>
+                        <p className="text-lg mt-2 text-gray-300">
+                            We’re brewing something great! Check back soon for fresh content.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-      <div className="w-full py-8 mt-4 text-center">
-        <div className="flex items-center justify-center">
-          <div className="mt-[10rem]">
-            <ScaleLoader color="#ffffff" height={50} />
-          </div>
-        </div>
-      </div>
+        !isLoading && (
+            <div className="w-full bg-gradient-to-b from-black via-purple-950 to-black py-12">
+                <div className="text-center mb-8">
+                    <h2 className="text-5xl font-extrabold text-white tracking-tight leading-tight">
+                        "Discover the Unseen, Explore the Unknown."
+                    </h2>
+                    <p className="text-xl text-gray-300 mt-4">
+                        From the latest movie reviews to insightful blogs, uncover content you’ve never seen before.
+                    </p>
+                </div>
+                <div className="ml-[2rem] h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
+                    {posts?.map((post) => (
+                        <div
+                            key={post._id}
+                            className="p-4 w-full sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
+                        >
+                            <PostCard {...post} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
     );
-  }
-
-  if (posts.length === 0 && userStatus !== true) {
-    return (
-      <div className="w-full py-8 mt-4 text-center">
-        <div className="flex flex-wrap">
-          <div className="p-2 w-full">
-            <h1 className="text-2xl font-bold text-white">
-              Login to read posts
-            </h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (posts.length === 0 && userStatus === true) {
-    return (
-      <div className="w-full py-8 mt-4 text-center">
-        <div className="flex flex-wrap">
-          <div className="p-2 w-full">
-            <h1 className="text-2xl font-bold text-white">
-              No Posts Available
-            </h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full bg-black py-8">
-      <div className="ml-2 h-full flex flex-wrap sm:justify-start justify-center items-center">
-        {posts.map((post) => (
-          <div key={post._id} className="p-2">
-            <PostCard $id={post._id} title={post.title} image={post.image} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default HomePage;

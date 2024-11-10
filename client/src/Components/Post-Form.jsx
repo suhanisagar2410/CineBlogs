@@ -20,71 +20,34 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const movie = useSelector((state) => state.Auth.movie);
-    const userData = useSelector((state) => state.Auth.userData);
-    const token = localStorage.getItem("authToken");
-
     useEffect(() => {
-        if (!movie) navigate('/add-post');
-    }, [movie, navigate]);
-
-    const slugTransform = useCallback((value) => {
-        if (value && typeof value === "string")
-            return value
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-zA-Z\d\s]+/g, "-")
-                .replace(/\s/g, "-");
-        return "";
-    }, []);
-
-    React.useEffect(() => {
-        const subscription = watch((value, { name }) => {
-            if (name === "title") {
-                setValue("slug", slugTransform(value.title), { shouldValidate: true });
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, [watch, slugTransform, setValue]);
-
+        if (!movie) navigate('/add-post')
+    }, [movie])
+    if (!movie) navigate('/add-post')
+    const token = localStorage.getItem('authToken')
     const submit = async (data) => {
         try {
-            const postData = {
-                userId: userData._id,
-                title: movie.Title,
-                content: data.content,
-                status: data.status === "active",
-                image: movie.Poster || "default-image.jpg",
-            };
-            console.log("Post data:",postData);
-            
-            if (post) {
-                const response = await axios.put(
-                    `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/update-post/${post._id}`,
-                    postData,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+            const post = await axios.post(
+                `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
+                {
+                    userId: "673095e331505be871075859",
+                    title: movie.Title,
+                    content: data.content,
+                    status: data.status == 'Public' ? true : false ,
+                    image: movie.Poster
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     }
-                );
-                toast.success("Post updated successfully!");
-            } else {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
-                    postData,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                toast.success("Post created successfully!");
+                }
+            );
+            console.log(post.data.data._id)
+            if(post.status == 200){
+                navigate(`/post/${post.data.data._id}`)
             }
-            navigate("/"); 
         } catch (error) {
-            toast.error("An error occurred. Please try again.");
-            console.error(error);
+            console.log(error.response.data)
         }
     };
 
