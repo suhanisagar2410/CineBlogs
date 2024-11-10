@@ -23,28 +23,35 @@ const SearchMovie = () => {
     }
 
     return (
-        <div className="w-full text-black max-w-md mx-auto bg-white shadow-lg rounded-lg p-4">
-            <p className="text-lg font-semibold mb-4 text-center">Select Your Movie :</p>
-            <input 
-                onChange={(e) => getMovies(e.target.value)}
-                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="text"
-                placeholder="Search for a movie..."
-            />
-            <div className="space-y-4">
-                {movies?.map((movie) => (
-                    <button onClick={()=> handleClick(movie)} key={movie.imdbID} className="flex w-full items-center space-x-4 p-2 border border-gray-200 rounded-lg">
-                        <img 
-                            className="w-16 h-16 object-cover rounded-md" 
-                            src={movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/150"} 
-                            alt={movie.Title} 
-                        />
-                        <p className="text-sm font-medium">{movie.Title}</p>
-                        <p className="text-sm font-medium"> |  Year - {movie.Year}</p>
-                    </button>
-                ))}
-            </div>
-        </div>
+<div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-white via-gray-100 to-gray-200 shadow-lg rounded-lg transform transition-all duration-300 hover:shadow-2xl">
+    <p className="text-xl font-bold text-center text-gray-700 mb-6">Select Your Movie</p>
+    <input 
+        onChange={(e) => getMovies(e.target.value)}
+        className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-400 transition-shadow duration-200 placeholder-gray-500"
+        type="text"
+        placeholder="Search for a movie..."
+    />
+    <div className="space-y-4">
+        {movies?.map((movie) => (
+            <button 
+                onClick={() => handleClick(movie)} 
+                key={movie.imdbID} 
+                className="flex items-center w-full p-4 space-x-4 bg-white border border-gray-300 rounded-lg shadow-sm transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
+            >
+                <img 
+                    className="w-16 h-16 object-cover rounded-md shadow-md" 
+                    src={movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/150"} 
+                    alt={movie.Title} 
+                />
+                <div className="flex flex-col justify-center">
+                    <p className="text-md font-semibold text-gray-700">{movie.Title}</p>
+                    <p className="text-sm text-gray-500">Year: {movie.Year}</p>
+                </div>
+            </button>
+        ))}
+    </div>
+</div>
+
     );
 };
 

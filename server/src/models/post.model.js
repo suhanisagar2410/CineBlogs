@@ -28,8 +28,6 @@ const postschema = new Schema(
     image:{
         type: String,
         required: true,
-        lowercase: true,
-        trim: true,
     },
     status:{
         type: Boolean,

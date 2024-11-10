@@ -2,7 +2,7 @@ import Joi from "joi"
 import { Post } from "../models/post.model.js"
 import { errorResponse, successResponse, catchResponse, uploadOnCloudinry } from "../utils/functions.js"
 import { User } from "../models/user.model.js"
-
+import mongoose from "mongoose"
 
 const postValidation = Joi.object({
     userId: Joi.string().required(),
@@ -79,8 +79,24 @@ const getAllPosts = async (req, res) => {
     }
   };
 
+const getPostById = async (req, res)=>{
+  try {
+      const postId = req.params.id
+      if (!mongoose.isValidObjectId(postId)) {
+        return errorResponse(res, "Invalid id");
+    }
+      const post = await Post.findOne({_id: postId})
+      if(!post) return errorResponse(res, "No post found");
+      
+      return successResponse({ res, message: "Post get successfully", data: post });
+  } catch (error) {
+      return catchResponse(res, "Error occurred in get posts", error);
+  }
+}
+
 export {
     createPost,
     getAllPosts,
-    getAllPostsOfUser
+    getAllPostsOfUser,
+    getPostById
 }

@@ -4,53 +4,54 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import postServices from "../AppWrite/CreatePost";
 import { Button } from "../Components";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function Post() {
   const [post, setPost] = useState(null);
   const [isAuthor, setAuthor] = useState(false)
-  const { slug } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  const getPost = async ()=>{
+    if(id){
+        await axios.get(`${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/get-post/${id}`)
+        .then((data)=> setPost(data.data.data)).catch((error)=> console.log(error))
+    }}
   useEffect(() => {
-    if (slug) {
-      postServices.getPost(slug).then((post) => {
-        if (post) setPost(post);
-        else navigate("/");
+    getPost()
+  }, []);
 
-      });
-    } else navigate("/");
-  }, [slug, navigate]);
-
-  const checkIsAuthor = async ()=>{
-    const userData = await useSelector((state) => state.Auth.userData);
-    let author = post?.userId === userData.$id ? true : false;
-    setAuthor(author)
-  }
-  checkIsAuthor()
-  const deletePost = () => {
-    postServices.deletePost(post.$id).then((status) => {
-      if (status) {
-        postServices.deleteFile(post.featuredImage);
-        toast.success("Post Deleted Successfully...", {
-          autoClose: 1000,
-          style: {
-              backgroundColor: "#2e1065",
-              color: "#ffffff",
-            },
-            hideProgressBar: true,
-        });
-        navigate("/");
-      }
-    });
-  };
+  console.log(post?.image)
+  // const checkIsAuthor = async ()=>{
+  //   const userData = await useSelector((state) => state.Auth.userData);
+  //   let author = post?.userId === userData.$id ? true : false;
+  //   setAuthor(author)
+  // }
+  // checkIsAuthor()
+  // const deletePost = () => {
+  //   postServices.deletePost(post._id).then((status) => {
+  //     if (status) {
+  //       postServices.deleteFile(post.image);
+  //       toast.success("Post Deleted Successfully...", {
+  //         autoClose: 1000,
+  //         style: {
+  //             backgroundColor: "#2e1065",
+  //             color: "#ffffff",
+  //           },
+  //           hideProgressBar: true,
+  //       });
+  //       navigate("/");
+  //     }
+  //   });
+  // };
 
   return post ? (
     <div className="py-8 bg-black">
       <>
         <div className="text-white w-full  h-full flex justify-center mb-4 relative  rounded-xl p-2">
           <img
-            src={postServices.getImage(post.featuredImage)}
-            alt={post.title}
+            src={post?.image}
+            alt={post?.title}
             className="rounded-xl w-[20rem ] h-[20rem] border p-2"
           />
 

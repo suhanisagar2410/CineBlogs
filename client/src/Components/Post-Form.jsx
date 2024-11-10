@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
+    const { register, handleSubmit, watch, setValue, control, getValues, errors } = useForm({
         defaultValues: {
             title: post?.title || "",
             slug: post?.$id || "",
@@ -28,12 +28,12 @@ export default function PostForm({ post }) {
     const submit = async (data) => {
         try {
             const post = await axios.post(
-                `${import.meta.env.VITE_SERVER_URI}/api/v1/posts/create`,
+                `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
                 {
                     userId: "6724998a782abbc307bf8e94",
                     title: movie.Title,
                     content: data.content,
-                    status: true ,
+                    status: true,
                     image: movie.Poster
                 },
                 {
@@ -42,7 +42,10 @@ export default function PostForm({ post }) {
                     }
                 }
             );
-            console.log(post)
+            console.log(post.data.data._id)
+            if(post.status == 200){
+                navigate(`/post/${post.data.data._id}`)
+            }
         } catch (error) {
             console.log(error.response.data)
         }
@@ -70,28 +73,38 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex w-full bg-black text-white flex-wrap flex-col justify-center items-center">
-            <div className="sm:w-full flex flex-col justify-center items-center w-full overflow-hidden">
-
-                <label className="text-2xl font-semibold" htmlFor="">Your Content Goes Here for {movie?.Title} :</label>
-                <div className="">
-                    <textarea className="w-[50rem] h-[28rem] rounded-lg mt-2 p-5 font-semibold text-black" type="textarea" name="" id=""  {...register("content", { required: true })} />
+        <div className="min-w-screen flex justify-center items-center">
+            <form onSubmit={handleSubmit(submit)} className="flex w-full flex-col items-center max-w-4xl p-8 space-y-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl shadow-xl text-white">
+                <div className="flex flex-col items-center w-full space-y-4">
+                    <label className="text-2xl font-semibold tracking-wide text-center text-gray-300" htmlFor="">
+                        Share your thoughts on <span className="text-indigo-400">{movie?.Title}</span>:
+                    </label>
+                    <textarea
+                        className="w-full max-w-3xl h-72 p-5 mt-2 text-lg font-medium text-gray-900 bg-gray-100 border-2 border-gray-200 rounded-lg resize-none shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all duration-200 ease-in-out"
+                        placeholder="Type your content here..."
+                        {...register("content", { required: true })}
+                    />
                 </div>
-            </div>
 
-            <div className="sm:w-1/3 w-full px-2 justify-center items-center">
-
-                <Select
-                    options={["Public", "Private"]}
-                    label="Status"
-                    defaultValue="public"
-                    className="mb-4 sm:w-full w-[21rem] "
-                    {...register("status", { required: true })}
-                />
-                <Button type="submit" bgColor={post ? "bg-white text-black" : undefined} className="sm:w-full w-[5rem]">
-                    {post ? "Update" : "Submit"}
-                </Button>
-            </div>
-        </form>
+                <div className="flex flex-col items-center w-full space-y-4 sm:w-1/3">
+                    <Select
+                        options={["Public", "Private"]}
+                        label="Status"
+                        placeholder="Select status"
+                        error={errors?.status}
+                        className="w-full max-w-sm mb-4 rounded-md shadow-md focus:ring-2 focus:ring-indigo-500/50 transition-transform transform hover:scale-105"
+                        {...register("status", { required: "Status is required" })}
+                    />
+                    <Button
+                        type="submit"
+                        bgColor={post ? "bg-white text-black" : undefined}
+                        className={`w-full max-w-xs py-3 font-semibold text-center rounded-lg shadow-md transform transition-transform duration-200 hover:scale-105 ${post ? "bg-white text-gray-900 hover:bg-gray-200" : "bg-indigo-500 text-white hover:bg-indigo-600"
+                            }`}
+                    >
+                        {post ? "Update" : "Submit"}
+                    </Button>
+                </div>
+            </form>
+        </div>
     );
 } 

@@ -31,7 +31,7 @@ const router = createBrowserRouter(
       <Route path="/add-post" element={<SearchMovie />} />
       <Route path="/all-posts" element={<AllPosts />} />
       <Route path="/edit-post/:slug" element={<EditPosts />} />
-      <Route path="/post/:slug" element={<Post />} />
+      <Route path="/post/:id" element={<Post />} />
       <Route path="/add-content" element={<AddPost />} />
     </Route>
   )
