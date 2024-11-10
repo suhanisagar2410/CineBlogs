@@ -39,7 +39,6 @@ function Login() {
 
       try {
         const { userData, token } = await loginUser(values);
-
         dispatch(authlogin({ user: userData, token }));
 
         navigate("/");

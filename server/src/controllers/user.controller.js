@@ -84,6 +84,7 @@ const getUserByIdValidationSchema = joi.object({
         return value;
 })
 })
+
 const getUserById = async (req, res) => {
     try {
         const { error } = await getUserByIdValidationSchema.validate(req.body)
@@ -96,10 +97,20 @@ const getUserById = async (req, res) => {
     }
 }
 
+const getUserByToken = async (req, res) => {
+    try {
+        const user = await User.findOne({token: req.body.token}, '-password -__v')
+        if (!user) return errorResponse(res, "User found");
+        return successResponse({ res, message: "User found successfully", data: user });
+    } catch (error) {
+        return catchResponse(res, "Error occurred in get user by id", error.message);
+    }
+}
 
 export {
     createUser,
     login,
     logOut,
-    getUserById
+    getUserById,
+    getUserByToken
 }

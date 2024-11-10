@@ -3,21 +3,24 @@ import postServices from '../AppWrite/CreatePost'
 import { PostCard} from '../Components'
 import { useSelector } from 'react-redux'
 import { ScaleLoader } from "react-spinners";
+import { getAllPosts } from '../AppWrite/Apibase';
 function HomePage() {
     const [posts, setPosts] = useState([]);
     const [isLoading, setLoading] = useState(false)
-  
-    useEffect(() => {
-      postServices.getPosts([]).then((posts) => {
-        setLoading(true)
+
+    const getPosts = async ()=>{
+        const authToken = localStorage.getItem("authToken")
+        const posts = await getAllPosts(authToken)
         if (posts) {
-        setPosts(posts.documents);
+          setPosts(posts);
         }
-        setLoading(false)
-      });
-
-    }, []);
-
+    }
+    useEffect(() => {
+        getPosts()
+      }, []);
+    useEffect(() => {
+        getPosts()
+      }, []);
     const userStatus = useSelector((state) => state.Auth.status)
   
     if (posts.length === 0 && userStatus!== true)  {
@@ -60,8 +63,8 @@ function HomePage() {
         <div className='w-full bg-black py-8'>
             <>
                 <div className='ml-2 h-full flex flex-wrap sm:justify-start justify-center items-center'>
-                    {posts.map((post) => (
-                        <div key={post.$id} className='p-2 '>
+                    {posts?.map((post) => (
+                        <div key={post._id} className='p-2 '>
                             <PostCard {...post} />
                         </div>
                     ))}
