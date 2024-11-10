@@ -22,13 +22,12 @@ function HomePage() {
             await getPosts();
             setLoading(false);
         };
-
         fetchPosts();
     }, []);
 
     const userStatus = useSelector((state) => state.Auth.status);
 
-    if (isLoading) {
+    if (isLoading && posts.length === 0 && userStatus === true) {
         return (
             <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
                 <div className="p-4 w-full flex flex-col justify-center items-center">
@@ -65,7 +64,7 @@ function HomePage() {
         );
     }
 
-    if (posts.length === 0 && userStatus === true && isLoading) {
+    if (posts.length === 0 && userStatus === true && !isLoading) {
         return (
             <div className="w-full py-12 mt-4 text-center">
                 <div className="flex items-center justify-center">

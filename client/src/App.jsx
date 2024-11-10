@@ -17,7 +17,6 @@ function App() {
     
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-
     if (token) {
       axios
         .get(`${apiBaseUrl}/api/v1/users/current-user`, {
@@ -26,31 +25,21 @@ function App() {
           },
         })
         .then((response) => {
-
           if (response.data && response.data.data) {
-            dispatch(Login({ userData: response.data.data }));
+            dispatch(Login({ user: response.data.data, token: token }));
           }
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);
-          dispatch(Logout());
-        }).finally(() => setLoading(false));
+          // dispatch(Logout());
+        })
+        .finally(() => setLoading(false));
     } else {
-      dispatch(Logout());
+      // dispatch(Logout());
+      setLoading(false);
     }
-  }, [dispatch]);
-
-  // useEffect(() => {
-  //   authService.getUser()
-  //   .then((userData) => {
-  //     if (userData) {
-  //       dispatch(Login({userData}))
-  //     } else {
-  //       dispatch(Logout())
-  //     }
-  //   })
-  //   .finally(() => setLoading(false))
-  // }, [])
+  }, []);
+  
   
   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-black text-black w-full'>
