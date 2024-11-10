@@ -2,7 +2,7 @@ import Joi from "joi"
 import { Post } from "../models/post.model.js"
 import { errorResponse, successResponse, catchResponse, uploadOnCloudinry } from "../utils/functions.js"
 import { User } from "../models/user.model.js"
-import mongoose from "mongoose"
+
 
 const postValidation = Joi.object({
     userId: Joi.string().required(),
@@ -12,6 +12,7 @@ const postValidation = Joi.object({
     image: Joi.string().required(),
 })
 const createPost = async (req, res) => {
+  
     try {
         const { error } = postValidation.validate(req.body)
         if (error) return errorResponse(res, error.message);
@@ -31,6 +32,33 @@ const createPost = async (req, res) => {
     }
 }
 
+const postUpdateValidation = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().min(5).required(),
+  status: Joi.boolean().required(),
+  image: Joi.string().required(),
+})
+
+const updatePost = async (req, res) => {
+  try {
+      const { error } = postUpdateValidation.validate(req.body)
+      if (error) return errorResponse(res, error.message);
+
+      const { title, content, status, image } = req.body;
+      const post = await Post.findOneAndUpdate(
+          { _id: req.params.id, userId: req.user._id },
+          { title, content, status, image },
+          { new: true }
+      );
+      if (!post) return errorResponse(res, "Post not found or user not authorized");
+
+      return successResponse({ res, message: "Post updated successfully", data: post });
+  } catch (error) {
+      return catchResponse(res, "Error occurred while updating post", error);
+  }
+}
+
+
 const getAllPostsOfUser = async (req, res)=>{
     try {
         const userId = req.user._id
@@ -44,6 +72,23 @@ const getAllPostsOfUser = async (req, res)=>{
         return catchResponse(res, "Error occurred in get posts", error);
     }
 }
+
+const getPostById = async (req, res) => {
+  
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId).populate('userId', 'username email');
+    if (!post) {
+      return errorResponse(res, "Post not found");
+    }
+
+    return successResponse({ res, message: "Post found successfully", data: post });
+
+  } catch (error) {
+    return catchResponse(res, "Error occurred while fetching post by ID", error.message);
+  }
+};
 
 const getAllPosts = async (req, res) => {
     try {
@@ -79,24 +124,22 @@ const getAllPosts = async (req, res) => {
     }
   };
 
-const getPostById = async (req, res)=>{
-  try {
-      const postId = req.params.id
-      if (!mongoose.isValidObjectId(postId)) {
-        return errorResponse(res, "Invalid id");
+const deletePost = async (req, res) => {
+    try {
+        const post = await Post.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+        if (!post) return errorResponse(res, "Post not found or user not authorized");
+
+        return successResponse({ res, message: "Post deleted successfully", data: {} });
+    } catch (error) {
+        return catchResponse(res, "Error occurred while deleting post", error);
     }
-      const post = await Post.findOne({_id: postId})
-      if(!post) return errorResponse(res, "No post found");
-      
-      return successResponse({ res, message: "Post get successfully", data: post });
-  } catch (error) {
-      return catchResponse(res, "Error occurred in get posts", error);
-  }
 }
 
 export {
     createPost,
     getAllPosts,
     getAllPostsOfUser,
+    updatePost,
+    deletePost,
     getPostById
 }

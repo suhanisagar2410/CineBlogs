@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
@@ -30,8 +29,8 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/add-post" element={<SearchMovie />} />
       <Route path="/all-posts" element={<AllPosts />} />
-      <Route path="/edit-post/:slug" element={<EditPosts />} />
-      <Route path="/post/:id" element={<Post />} />
+      <Route path="/edit-post/:id" element={<EditPosts />} />
+      <Route path="/post/:postId" element={<Post />} />
       <Route path="/add-content" element={<AddPost />} />
     </Route>
   )

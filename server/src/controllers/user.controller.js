@@ -76,6 +76,23 @@ const logOut = async (req, res) => {
     }
 }
 
+const getCurrentUser = async (req, res) => {
+    try {
+      const user = req.user;
+      if (!user) {
+        return errorResponse(res, "User not found.");
+      }
+      
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      
+      return successResponse({ res, message: "User found successfully", data: userResponse });
+    } catch (error) {
+      return catchResponse(res, "Error occurred in fetching current user", error.message);
+    }
+  };
+
+
 const getUserByIdValidationSchema = joi.object({
     userId: joi.string().custom((value, helpers) => {
         if (!mongoose.isValidObjectId(value)) {
@@ -97,20 +114,10 @@ const getUserById = async (req, res) => {
     }
 }
 
-const getUserByToken = async (req, res) => {
-    try {
-        const user = await User.findOne({token: req.body.token}, '-password -__v')
-        if (!user) return errorResponse(res, "User found");
-        return successResponse({ res, message: "User found successfully", data: user });
-    } catch (error) {
-        return catchResponse(res, "Error occurred in get user by id", error.message);
-    }
-}
-
 export {
     createUser,
     login,
     logOut,
     getUserById,
-    getUserByToken
+    getCurrentUser
 }
