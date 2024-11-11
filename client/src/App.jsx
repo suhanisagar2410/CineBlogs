@@ -18,7 +18,6 @@ function App() {
     
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-
     if (token) {
       axios
         .get(`${apiBaseUrl}/api/v1/users/current-user`, {
@@ -27,15 +26,15 @@ function App() {
           },
         })
         .then((response) => {
-          console.log("User data fetched:", response);
           if (response.data && response.data.data) {
-            dispatch(Login({ userData: response.data.data }));
+            dispatch(Login({ user: response.data.data, token: token }));
           }
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);
-          dispatch(Logout());
-        }).finally(() => setLoading(false));
+          // dispatch(Logout());
+        })
+        .finally(() => setLoading(false));
     } else {
       dispatch(Logout());
       setLoading(false);

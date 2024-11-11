@@ -15,9 +15,7 @@ import SearchMovie from "./Pages/SearchMovie.jsx";
 import AddPost from "./Pages/AddPost.jsx";
 import SignUpPage from "./Pages/SignUpPage.jsx";
 import EditPosts from "./Pages/EditPosts.jsx";
-
 import Post from "./Pages/Post.jsx";
-
 import AllPosts from "./Pages/AllPosts.jsx";
 
 
