@@ -1,16 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Select } from "./index";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ScaleLoader } from "react-spinners";
+import { ScaleLoader } from "react-spinners"; // For loading spinner
 
+// API interaction functions can be directly written with axios
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue } = useForm({
+    const { register, handleSubmit, setValue } = useForm({
         defaultValues: {
             title: post?.title || "",
             slug: post?.slug || "",
@@ -18,56 +19,64 @@ export default function PostForm({ post }) {
             status: post?.status || "Public",
         },
     });
+
     const [isLoading, setLoading] = useState(false);
     const navigate = useNavigate();
     const movie = useSelector((state) => state.Auth.movie);
     const userData = useSelector((state) => state.Auth.userData);
     const token = localStorage.getItem("authToken");
+
     useEffect(() => {
-        if (!movie) navigate('/add-post');
+        if (!movie) navigate('/add-post'); // If no movie data is available, redirect
     }, [movie, navigate]);
 
+    useEffect(() => {
+        if (post) {
+            setValue("title", post.title); 
+            setValue("content", post.content);
+            setValue("status", post.status ? "Public" : "Private");
+        }
+    }, [post, setValue]);
+
     const submit = async (data) => {
-        setLoading(true)
+        setLoading(true); // Set loading state
         try {
             const postData = {
                 userId: userData?._id,
-                title: movie.Title,
+                title: post ? data.title : movie.Title,
                 content: data.content,
-                status: data.status == "Public" ? true : false,
-                image: movie.Poster
+                status: data.status === "Public" ? true : false,
+                image: post ? post.image : movie.Poster,
             };
 
+            let response;
             if (post) {
-                const response = await axios.put(
+                // Update existing post
+                response = await axios.put(
                     `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/update-post/${post._id}`,
                     postData,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                setLoading(false)
-                navigate(`/post/${response.data.data._id}`);
                 toast.success("Post updated successfully!");
             } else {
-                const response = await axios.post(
+                // Create new post
+                response = await axios.post(
                     `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/create`,
                     postData,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                setLoading(false)
-                navigate(`/post/${response.data.data._id}`);
                 toast.success("Post created successfully!");
             }
+
+            setLoading(false); // Hide loading spinner
+            navigate(`/post/${response.data.data._id}`); // Redirect to post details page
         } catch (error) {
-            setLoading(false)
-            toast.error("An error occurred. Please try again.");
+            setLoading(false);
+            toast.error(error.response?.data?.message || "An error occurred. Please try again.");
             console.error(error);
         }
     };
@@ -86,7 +95,6 @@ export default function PostForm({ post }) {
                 <div className='mt-[5rem]'>
                     <ScaleLoader color="#ffffff" height={50} />
                 </div>
-
             </div>
         );
     }
@@ -135,7 +143,5 @@ export default function PostForm({ post }) {
                 </div>
             </div>
         </form>
-
-
     );
 }

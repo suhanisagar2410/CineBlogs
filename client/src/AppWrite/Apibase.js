@@ -65,20 +65,20 @@ export const getAllPosts = async (authToken) => {
   }
 };
 
-export const getUserByToken = async (authToken) => {
-  try {
-    const response = await axios.get(`${apiBaseUrl}/api/v1/users/get-user-by-token`,{authToken});
+// export const getUserByToken = async (authToken) => {
+//   try {
+//     const response = await axios.get(`${apiBaseUrl}/api/v1/users/get-user-by-token`,{authToken});
 
-    if (response.data.data) {
-      return response.data.data;
-    }
+//     if (response.data.data) {
+//       return response.data.data;
+//     }
 
-    throw new Error("Unexpected response from server");
-  } catch (error) {
-    console.log(error)
-    throw new Error(error.response?.data?.message || "An error occurred during getting Post");
-  }
-};
+//     throw new Error("Unexpected response from server");
+//   } catch (error) {
+//     console.log(error)
+//     throw new Error(error.response?.data?.message || "An error occurred during getting Post");
+//   }
+// };
 
 export const getAllPostsByUser = async (authToken) => {
   try {
@@ -182,5 +182,39 @@ export const getPostById = async (postId) => {
       throw new Error(
         error.response?.data?.message || "Failed to delete the post"
       );
+    }
+  };
+
+  export const updatePost = async (postId, postData, token) => {
+    try {
+      const response = await axios.put(
+        `${apiBaseUrl}/api/v1/posts/update-post/${postId}`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to update post");
+    }
+  };
+
+  export const createPost = async (postData, token) => {
+    try {
+      const response = await axios.post(
+        `${apiBaseUrl}/api/v1/posts/create`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to create post");
     }
   };

@@ -20,6 +20,7 @@ function LogoutBtn() {
         },
         hideProgressBar: true,
       });
+      navigate('/login')
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Error logging out. Please try again.", {

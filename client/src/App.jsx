@@ -12,7 +12,8 @@ import axios from 'axios'
 const apiBaseUrl = import.meta.env.VITE_REACT_APP_API_BASE_URL;
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  
   const dispatch = useDispatch()
     
   useEffect(() => {
@@ -35,11 +36,10 @@ function App() {
         })
         .finally(() => setLoading(false));
     } else {
-      // dispatch(Logout());
+      dispatch(Logout());
       setLoading(false);
     }
-  }, []);
-  
+  }, [dispatch]);
   
   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-black text-black w-full'>

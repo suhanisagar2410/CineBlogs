@@ -35,19 +35,18 @@ const createPost = async (req, res) => {
 const postUpdateValidation = Joi.object({
   title: Joi.string().required(),
   content: Joi.string().min(5).required(),
-  status: Joi.boolean().required(),
-  image: Joi.string().required(),
+  status: Joi.boolean().required()
 })
 
 const updatePost = async (req, res) => {
+  
   try {
       const { error } = postUpdateValidation.validate(req.body)
       if (error) return errorResponse(res, error.message);
-
-      const { title, content, status, image } = req.body;
+      const { title, content, status } = req.body;
       const post = await Post.findOneAndUpdate(
-          { _id: req.params.id, userId: req.user._id },
-          { title, content, status, image },
+          { _id: req.params.postId, userId: req.user._id },
+          { title, content, status },
           { new: true }
       );
       if (!post) return errorResponse(res, "Post not found or user not authorized");
@@ -126,7 +125,7 @@ const getAllPosts = async (req, res) => {
 
 const deletePost = async (req, res) => {
     try {
-        const post = await Post.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+        const post = await Post.findOneAndDelete({ _id: req.params.postId, userId: req.user._id });
         if (!post) return errorResponse(res, "Post not found or user not authorized");
 
         return successResponse({ res, message: "Post deleted successfully", data: {} });
