@@ -24,7 +24,6 @@ const postschema = new Schema(
       },
     image:{
         type: String,
-        required: true
     },
     status:{
         type: Boolean,

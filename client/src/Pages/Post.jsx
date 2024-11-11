@@ -4,37 +4,58 @@ import axios from "axios";
 import { Button } from "../Components";
 import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
+import { deletePost, getPostById } from "../AppWrite/Apibase";
+import { toast } from "react-toastify";
 
 export default function Post() {
   const [post, setPost] = useState(null);
   const [isAuthor, setAuthor] = useState(false);
+  console.log("Is author:",isAuthor);
+  
   const { postId } = useParams();
+  const userStatus = useSelector((state) => state.Auth.status);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.Auth.userData);
-  const authToken = localStorage.getItem("authToken")
   const [isLoading, setLoading] = useState(false);
 
-  const getPost = async () => {
-    setLoading(true)
+  useEffect(() => {
     if (postId) {
-      await axios
-        .get(
-          `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/posts/get-post/${postId}`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
+      getPostById(postId)
+        .then((fetchedPost) => {
+          setPost(fetchedPost);
+          if (userData) {
+            checkIsAuthor(fetchedPost);
+          }
         })
-        .then((data) => setPost(data.data.data))
-        .catch((error) => console.log(error));
+        .catch(() => {
+          toast.error("Post not found");
+          navigate("/");
+        });
     }
-    setLoading(false)
+  }, [postId, navigate, userData]);
+
+  const checkIsAuthor = (fetchedPost) => {
+    if (userData && fetchedPost.userId._id === userData._id) {
+      setAuthor(true);
+    }
   };
 
-  useEffect(() => {
-    getPost();
-  }, []);
+    
+  const deletePost = async () => {
+    setLoading(true);
+    deletePost(post._id) // Use API function to delete post
+      .then(() => {
+        toast.success("Post deleted successfully!");
+        navigate("/");
+      })
+      .catch((error) => {
+        toast.error(error.message || "An error occurred while deleting the post.");
+      })
+      .finally(() => setLoading(false));
+  };
 
-  const userStatus = useSelector((state) => state.Auth.status);
+  if (!post) return null; 
+
 
 
   if (isLoading) {
@@ -99,7 +120,7 @@ export default function Post() {
 
       {isAuthor && (
         <div className="absolute bottom-6 right-6 flex gap-2">
-          <Link to={`/edit-post/${post.$id}`}>
+          <Link to={`/edit-post/${post._id}`}>
             <Button className="px-4 py-2 bg-white text-black rounded-md shadow-sm hover:bg-gray-200 transition">
               Edit
             </Button>

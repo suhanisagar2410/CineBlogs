@@ -12,7 +12,8 @@ import axios from 'axios'
 const apiBaseUrl = import.meta.env.VITE_REACT_APP_API_BASE_URL;
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  
   const dispatch = useDispatch()
     
   useEffect(() => {
@@ -26,7 +27,7 @@ function App() {
           },
         })
         .then((response) => {
-
+          console.log("User data fetched:", response);
           if (response.data && response.data.data) {
             dispatch(Login({ userData: response.data.data }));
           }
@@ -37,20 +38,9 @@ function App() {
         }).finally(() => setLoading(false));
     } else {
       dispatch(Logout());
+      setLoading(false);
     }
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   authService.getUser()
-  //   .then((userData) => {
-  //     if (userData) {
-  //       dispatch(Login({userData}))
-  //     } else {
-  //       dispatch(Logout())
-  //     }
-  //   })
-  //   .finally(() => setLoading(false))
-  // }, [])
   
   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-black text-black w-full'>
