@@ -61,7 +61,7 @@ const updatePost = async (req, res) => {
 const getAllPostsOfUser = async (req, res)=>{
     try {
         const userId = req.user._id
-        const posts = await Post.find({status: true, userId})
+        const posts = await Post.find({userId})
         if(!posts) return errorResponse(res, "Error while getting posts");
 
         if(posts.length == 0) return errorResponse(res, "No post found");
