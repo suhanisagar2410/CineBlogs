@@ -96,7 +96,9 @@ const getAllPosts = async (req, res) => {
       const page = req.query.page;
       const search = req.query.search;
       const regex = new RegExp(search, "i");
-      const filters = {};
+      const filters = {
+         status: true 
+      };
       if (category) filters.category = category;
   
       if (search)
