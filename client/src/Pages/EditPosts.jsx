@@ -3,21 +3,25 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PostForm } from '../Components';  
 import { toast } from 'react-toastify';
 import { getPostById } from '../AppWrite/Apibase';
+import { ScaleLoader } from "react-spinners";
+import { AddMovie } from '../Store/AuthSlice';
+import { useDispatch } from 'react-redux';
 
 function EditPost() {
   const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { postId } = useParams();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
   useEffect(() => {
     
     if (postId) {
       getPostById(postId)
         .then((fetchedPost) => {
+          dispatch(AddMovie(fetchedPost))
           setPost(fetchedPost); 
-          setLoading(false); 
+          setLoading(false);
         })
         .catch((error) => {
           setError(error.message);
@@ -28,10 +32,21 @@ function EditPost() {
     }
   }, [postId, navigate]);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="w-full flex justify-center items-center py-12">
-        <h2 className="text-2xl text-white">Loading...</h2>
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
+        </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+
       </div>
     );
   }
@@ -45,9 +60,7 @@ function EditPost() {
   }
 
   return post ? (
-    <div className="py-10 bg-gradient-to-b from-black via-purple-900 to-black min-h-screen flex flex-col items-center">
       <PostForm post={post} />
-    </div>
   ) : null;
 }
 
