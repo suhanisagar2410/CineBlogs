@@ -23,6 +23,7 @@ export default function PostForm({ post }) {
     const [isLoading, setLoading] = useState(false);
     const navigate = useNavigate();
     const movie = useSelector((state) => state.Auth.movie);
+    console.log(movie, '/////')
     const userData = useSelector((state) => state.Auth.userData);
     const token = localStorage.getItem("authToken");
 
@@ -41,13 +42,19 @@ export default function PostForm({ post }) {
     const submit = async (data) => {
         setLoading(true); // Set loading state
         try {
-            const postData = {
-                userId: userData?._id,
-                title: post ? data.title : movie.Title,
-                content: data.content,
-                status: data.status === "Public" ? true : false,
-                image: post ? post.image : movie.Poster,
-            };
+            const postData = post
+            ? {
+                  title: data.title,
+                  content: data.content,
+                  status: data.status === "Public" ? true : false,
+              }
+            : { 
+                  userId: userData?._id,
+                  title: data.title,
+                  content: data.content,
+                  status: data.status === "Public" ? true : false,
+                  image: movie.Poster,
+              };
 
             let response;
             if (post) {
@@ -103,7 +110,7 @@ export default function PostForm({ post }) {
         <form onSubmit={handleSubmit(submit)} className="w-full bg-gradient-to-b from-black via-purple-950 to-black text-white py-12 px-6 rounded-lg shadow-lg">
             <div className="text-center mb-8">
                 <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                    Add Content for <span className="text-teal-400">{movie?.Title}</span>
+                    Add Content for <span className="text-teal-400">{movie?.Title || movie.title}</span>
                 </h2>
                 <p className="text-xl text-gray-300 mt-4">
                     Share your thoughts and reviews in a place that matters.
