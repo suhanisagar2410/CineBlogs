@@ -41,9 +41,9 @@ export default function Post() {
   };
 
     
-  const deletePost = async () => {
+  const deletePostFunc = async () => {
     setLoading(true);
-    deletePost(post._id) // Use API function to delete post
+    await deletePost(post._id)
       .then(() => {
         toast.success("Post deleted successfully!");
         navigate("/");
@@ -55,8 +55,6 @@ export default function Post() {
   };
 
   if (!post) return null; 
-
-
 
   if (isLoading) {
     return (
@@ -102,13 +100,13 @@ export default function Post() {
           <img
             src={post?.image}
             alt={post?.title}
-            className="w-full h-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
+            className="sm:w-full w-[17rem] h-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
           />
         </div>
 
         <div className="sm:w-[60%] w-full text-white">
           <h1 className="text-2xl font-extrabold text-center sm:text-left text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 leading-tight mt-6 transform hover:scale-105 transition-all duration-300 ease-in-out">
-            {post.title}:-
+            {post.title}
           </h1>
 
 
@@ -127,7 +125,7 @@ export default function Post() {
           </Link>
           <Button
             className="px-4 py-2 bg-white text-black rounded-md shadow-sm hover:bg-gray-200 transition"
-            onClick={deletePost}
+            onClick={deletePostFunc}
           >
             Delete
           </Button>

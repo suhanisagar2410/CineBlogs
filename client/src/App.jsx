@@ -42,7 +42,7 @@ function App() {
   }, [dispatch]);
   
   return !loading ? (
-    <div className='min-h-screen flex flex-wrap content-between bg-black text-black w-full'>
+    <div className='min-h-screen overflow-hidden overflow-x-hidden flex flex-wrap content-between bg-black text-black w-full'>
       <div className='w-full min-h-screen mb-5'>
         <Header />
         <ToastContainer/>

@@ -97,11 +97,11 @@ function HomePage() {
                         From the latest movie reviews to insightful blogs, uncover content you’ve never seen before.
                     </p>
                 </div>
-                <div className="ml-[2rem] h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
+                <div className="w-full h-full ml-3 flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
                     {posts?.map((post) => (
                         <div
                             key={post._id}
-                            className="p-4 w-full sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
+                            className="p-4 sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
                         >
                             <PostCard {...post} />
                         </div>

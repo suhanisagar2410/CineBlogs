@@ -80,11 +80,11 @@ function AllPosts() {
 
   return (
     <div className="w-full bg-gradient-to-b from-black via-purple-950 to-black py-12">
-      <div className="ml-[2rem] h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
+      <div className="h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
         {posts?.map((post) => (
           <div
             key={post._id}
-            className="p-4 w-full sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
+            className="p-4 sm:w-[18rem] lg:w-[20rem] xl:w-[22rem] transition-transform transform hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
           >
             <PostCard {...post} />
           </div>
