@@ -6,6 +6,6 @@ const userRouter = Router()
 userRouter.route("/create").post( createUser)
 userRouter.route("/login").post(login)
 userRouter.route("/logout").post(authenticateToken, logOut)
-userRouter.route("/get-user").get(authenticateToken, getUserById)
+userRouter.route("/get-user/:id").get(authenticateToken, getUserById)
 userRouter.route("/current-user").get( authenticateToken, getCurrentUser);                    
 export default userRouter

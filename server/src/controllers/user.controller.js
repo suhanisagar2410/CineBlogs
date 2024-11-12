@@ -92,22 +92,15 @@ const getCurrentUser = async (req, res) => {
     }
   };
 
-
-const getUserByIdValidationSchema = joi.object({
-    userId: joi.string().custom((value, helpers) => {
-        if (!mongoose.isValidObjectId(value)) {
-            return helpers.message("Invalid userId");
-        }
-        return value;
-})
-})
-
 const getUserById = async (req, res) => {
     try {
-        const { error } = await getUserByIdValidationSchema.validate(req.body)
-        if (error) return errorResponse(res, error.message);
-        const user = await User.findOne({_id: req.body.userId}, '-password -__v')
-        if (!user) return errorResponse(res, "User found");
+        const userId = req.params.id
+        if (!mongoose.isValidObjectId(userId)) {
+            return errorResponse("Invalid userId");
+        }
+        const user = await User.findOne({_id: userId}, '-password -__v')
+        console.log(user)
+        if (!user) return errorResponse(res, "User not found");
         return successResponse({ res, message: "User found successfully", data: user });
     } catch (error) {
         return catchResponse(res, "Error occurred in get user by id", error.message);
