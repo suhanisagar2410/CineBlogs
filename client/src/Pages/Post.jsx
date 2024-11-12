@@ -38,8 +38,6 @@ export default function Post() {
     }
   };
 
-  console.log(post?.userId.username, '////')
-
   const deletePostFunc = async () => {
     setLoading(true);
     await deletePost(post._id)
@@ -110,24 +108,30 @@ export default function Post() {
 
       <div className="w-full max-w-[80rem] flex flex-col sm:flex-col items-center gap-8 text-white mt-16 sm:mt-0">
         <div className="sm:flex justify-center items-center">
-        <div className="sm:w-full w-full h-full sm:h-[17rem] sm:rounded-xl flex justify-center items-center relative">
-          <img
-            src={post?.image}
-            alt={post?.title}
-            className="sm:w-full w-[17rem] mb-5 sm:mb-0 h-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-        <div className="flex flex-col w-full sm:ml-5 items-center sm:items-start text-gray-300 mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
-            Written by
-          </h2>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition-all duration-300">
-            {post?.userId.username || "Unknown Author"}
-          </h3>
-          <p className="text-sm sm:text-base text-gray-400 mt-2 sm:mt-3 tracking-wide">
-            {new Date(post.createdAt).toLocaleDateString()}
-          </p>
-        </div>
+          <div className="sm:w-full w-full h-full sm:h-[17rem] sm:rounded-xl flex justify-center items-center relative">
+            <img
+              src={post?.image}
+              alt={post?.title}
+              className="sm:w-full w-[17rem] mb-5 sm:mb-0 h-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
+            />
+          </div>
+
+          {
+            userData?._id != post?.userId._id ? (
+              <div className="flex flex-col w-full sm:ml-5 items-center sm:items-start text-gray-300 mb-6 sm:mb-8">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
+                  Written by
+                </h2>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition-all duration-300">
+                  {post?.userId.username || "Unknown Author"}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-400 mt-2 sm:mt-3 tracking-wide">
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            ) : null
+          }
+
         </div>
         <div className="sm:w-[60%] w-full text-white">
           <h1 className="text-2xl font-extrabold text-center left text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 leading-tight mt-6 transform hover:scale-105 transition-all duration-300 ease-in-out">
