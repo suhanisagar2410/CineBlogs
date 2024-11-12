@@ -97,7 +97,7 @@ function HomePage() {
                         From the latest movie reviews to insightful blogs, uncover content you’ve never seen before.
                     </p>
                 </div>
-                <div className="w-full h-full ml-3 flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
+                <div className="w-full h-full flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
                     {posts?.map((post) => (
                         <div
                             key={post._id}
