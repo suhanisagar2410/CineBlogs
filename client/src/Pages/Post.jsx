@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 export default function Post() {
   const [post, setPost] = useState(null);
   const [isAuthor, setAuthor] = useState(false);
-  console.log("Is author:", isAuthor);
 
   const { postId } = useParams();
   const userStatus = useSelector((state) => state.Auth.status);
@@ -38,6 +37,8 @@ export default function Post() {
       setAuthor(true);
     }
   };
+
+  console.log(post?.userId.username, '////')
 
   const deletePostFunc = async () => {
     setLoading(true);
@@ -114,7 +115,7 @@ export default function Post() {
             Written by
           </h2>
           <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600 hover:scale-105 transform transition-all duration-300">
-            {userData.username || "Unknown Author"}
+            {post?.userId.username || "Unknown Author"}
           </h3>
           <p className="text-sm sm:text-base text-gray-400 mt-2 sm:mt-3 tracking-wide">
             {new Date(post.createdAt).toLocaleDateString()}

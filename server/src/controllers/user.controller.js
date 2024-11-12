@@ -99,7 +99,6 @@ const getUserById = async (req, res) => {
             return errorResponse("Invalid userId");
         }
         const user = await User.findOne({_id: userId}, '-password -__v')
-        console.log(user)
         if (!user) return errorResponse(res, "User not found");
         return successResponse({ res, message: "User found successfully", data: user });
     } catch (error) {
