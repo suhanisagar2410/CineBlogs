@@ -15,7 +15,6 @@
     "@hookform/resolvers": "^3.9.1",
     "@mui/material": "^6.1.6",
     "@reduxjs/toolkit": "^2.2.1",
-    "@tinymce/tinymce-react": "^4.3.2",
     "appwrite": "^13.0.2",
     "axios": "^1.7.7",
     "cheerio": "^1.0.0-rc.12",

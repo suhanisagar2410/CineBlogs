@@ -1,17 +1,20 @@
 import { User } from "../models/user.model.js"
 import joi from "joi"
 import mongoose from "mongoose"
-import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare } from "../utils/functions.js"
+import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
     email: joi.string().email().required(),
-    password: joi.string().required().min(4)
+    password: joi.string().required().min(4),
+    profileImage: joi.any()
 })
 const createUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
         const { error } = userValidationSchema.validate(req.body);
 
+        const file = req.file
+        if(!file) return errorResponse(res, "Profile image is required");
         if (error) return errorResponse(res, error.message);
 
         const userAlreadyExists = await User.findOne({ username });
@@ -19,9 +22,12 @@ const createUser = async (req, res) => {
 
         const existingEmail = await User.findOne({ email });
         if (existingEmail) return errorResponse(res, "Email already exists");
+        
+        const profileImageUrl = await uploadOnCloudinry(file.path)
+        if(!profileImageUrl) return errorResponse(res, "Image not uploaded on cloudinary");
 
         const token = generateAccessToken({ username, email })
-        const user = await User.create({ username, email, password, token });
+        const user = await User.create({ username, email, password, token, profileImage: profileImageUrl });
         if (!user) return errorResponse(res, "User not created");
 
         const userResponse = user.toObject();

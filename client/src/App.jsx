@@ -31,8 +31,7 @@ function App() {
           }
         })
         .catch((error) => {
-          console.error('Error fetching user data:', error);
-          // dispatch(Logout());
+          console.error('Error fetching user data:', error);  
         })
         .finally(() => setLoading(false));
     } else {
@@ -40,6 +39,24 @@ function App() {
       setLoading(false);
     }
   }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
+        </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+      </div>
+    );
+  }
   
   return !loading ? (
     <div className='min-h-screen overflow-hidden overflow-x-hidden flex flex-wrap content-between bg-black text-black w-full'>

@@ -49,7 +49,7 @@ export const uploadOnCloudinry = async (imagePath) => {
     try {
         const response = await cloudinary.uploader.upload(imagePath);
         fs.unlinkSync(imagePath)
-        return response;
+        return response.url;
     } catch (error) {
         fs.unlinkSync(imagePath)
         return new Error(error);

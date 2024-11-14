@@ -16,6 +16,10 @@ const userSchema = new Schema(
       trim: true,
       unique: true,
     },
+    profileImage: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: [true, "Password Is Required"],

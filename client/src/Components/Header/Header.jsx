@@ -8,14 +8,11 @@ import '.././../App.css';
 
 function Header() {
   const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const authStatus = useSelector((state) => state.Auth.status);
   const userData = useSelector((state) => state.Auth.userData);
   const navigate = useNavigate();
   const mobileNavRef = useRef(null);
 
-  const categories = ['All', 'Tech', 'Lifestyle', 'Travel', 'Food'];
   const navItems = [
     { name: 'Home', slug: "/", active: true },
     { name: "Login", slug: "/login", active: !authStatus },
@@ -24,7 +21,6 @@ function Header() {
     { name: "Add Post", slug: "/add-post", active: authStatus },
   ];
 
-  // Close mobile nav when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (mobileNavRef.current && !mobileNavRef.current.contains(event.target)) {
@@ -38,7 +34,7 @@ function Header() {
   }, [mobileNavRef]);
 
   return (
-    <header className="py-3 px-6 lg:px-16 shadow bg-black text-white">
+    <header className="py-3 px-6 lg:px-16 shadow bg-black text-white relative">
       <nav className="flex items-center justify-between">
         {/* Logo */}
         <div className="mr-4">
@@ -50,29 +46,7 @@ function Header() {
             />
           </Link>
         </div>
-        
-        {/* <div className="sm:flex items-center space-x-4 flex-1 hidden">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search..."
-            className="px-4 py-2 text-black rounded-full outline-none w-full sm:w-auto"
-          />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 bg-white text-black rounded-full outline-none"
-          >
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div> */}
 
-        {/* Mobile Navbar Toggle */}
         <button
           className="lg:hidden ml-auto text-[2rem] text-white hover:text-blue-500"
           onClick={() => setIsMobileNavVisible(!isMobileNavVisible)}
@@ -99,10 +73,15 @@ function Header() {
               <li>
                 <LogoutBtn />
               </li>
-              <li className="mr-4">
-                <span className="inline-block px-6 py-2 duration-200 hover:text-blue-500 rounded-full">
-                  Hello, {userData?.username}
-                </span>
+              <li className="flex items-center mr-4 space-x-2">
+                <Link to={`/profile/${userData?._id}`}>
+                <div
+                  className="w-10 cursor-pointer h-10 bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
+                  style={{
+                    backgroundImage: `url(${userData?.profileImage || 'https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'})`,
+                  }}
+                ></div>
+                </Link>
               </li>
             </>
           )}
@@ -135,11 +114,13 @@ function Header() {
               <li>
                 <LogoutBtn />
               </li>
-              <li className="mr-4">
-                <span className="inline-block px-4 py-2 duration-200 hover:text-blue-500 rounded-md">
-                  Hello, {userData?.username}
-                </span>
-              </li>
+              <li className="mr-4 flex items-center space-x-2">
+                <img
+                  src='https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'
+                  alt="User Profile"
+                  className="w-8 h-8 cursor-pointer rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
+                />
+              </li> 
             </>
           )}
         </ul>

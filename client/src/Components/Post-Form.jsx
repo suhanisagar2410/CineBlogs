@@ -33,9 +33,9 @@ export default function PostForm({ post }) {
 
     useEffect(() => {
         if (post) {
-            setValue("title", post.title); 
-            setValue("content", post.content);
-            setValue("status", post.status ? "Public" : "Private");
+            setValue("title", post?.title); 
+            setValue("content", post?.content);
+            setValue("status", post?.status ? "Public" : "Private");
         }
     }, [post, setValue]);
 
@@ -44,16 +44,16 @@ export default function PostForm({ post }) {
         try {
             const postData = post
             ? {
-                  title: data.title,
-                  content: data.content,
-                  status: data.status === "Public" ? true : false,
+                  title: data?.title,
+                  content: data?.content,
+                  status: data?.status === "Public" ? true : false,
               }
             : { 
                   userId: userData?._id,
-                  title: data.title,
-                  content: data.content,
-                  status: data.status === "Public" ? true : false,
-                  image: movie.Poster,
+                  title: movie?.Title,
+                  content: data?.content,
+                  status: data?.status === "Public" ? true : false,
+                  image: movie?.Poster,
               };
 
             let response;

@@ -17,6 +17,7 @@ import SignUpPage from "./Pages/SignUpPage.jsx";
 import EditPosts from "./Pages/EditPosts.jsx";
 import Post from "./Pages/Post.jsx";
 import AllPosts from "./Pages/AllPosts.jsx";
+import UserProfile from "./Pages/UserProfile.jsx";
 
 
 const router = createBrowserRouter(
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="/edit-post/:postId" element={<EditPosts />} />
       <Route path="/post/:postId" element={<Post />} />
       <Route path="/add-content" element={<AddPost />} />
+      <Route path="/profile/:userId" element={<UserProfile />} />
     </Route>
   )
 );

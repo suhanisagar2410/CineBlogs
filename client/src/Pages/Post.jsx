@@ -18,17 +18,20 @@ export default function Post() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     if (postId) {
       getPostById(postId)
         .then((fetchedPost) => {
           setPost(fetchedPost);
           if (userData) {
             checkIsAuthor(fetchedPost);
+            setLoading(false);
           }
         })
         .catch(() => {
           toast.error("Post not found");
           navigate("/");
+          setLoading(false);
         });
     }
   }, [postId, navigate, userData]);
@@ -50,8 +53,6 @@ export default function Post() {
       })
       .finally(() => setLoading(false));
   };
-
-  if (!post) return null;
 
   if (isLoading) {
     return (
@@ -122,9 +123,11 @@ export default function Post() {
                 <h2 className="text-2xl sm:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
                   Written by
                 </h2>
+                <Link to={`/profile/${post?.userId._id}`}>
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition-all duration-300">
                   {post?.userId.username || "Unknown Author"}
                 </h3>
+                </Link>
                 <p className="text-sm sm:text-base text-gray-400 mt-2 sm:mt-3 tracking-wide">
                   {new Date(post.createdAt).toLocaleDateString()}
                 </p>
