@@ -89,7 +89,7 @@ function Signup() {
     <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10">
         <h2 className="text-center text-2xl font-bold leading-tight sm:text-3xl mb-3">
-          Sign up to create account
+          Create Account
         </h2>
         <p className="mt-2 text-center text-base text-black/60">
           Already have an account?&nbsp;
