@@ -55,7 +55,7 @@ export default function UserProfile() {
     <div className="bg-gradient-to-b from-black via-purple-950 to-black min-h-screen flex flex-col items-center py-12 px-4">
       <div className="w-full max-w-[40rem] bg-gradient-to-b from-purple-800 to-indigo-900 rounded-xl shadow-lg p-8 text-white text-center">
         <img
-          src=  {userData?.profileImage || "../johncena.jpg"}
+          src=  {userData?.profileImage || "https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg"}
           alt="Profile"
           className="w-32 h-32 rounded-full mx-auto border-4 border-indigo-500 object-cover mb-6 transition-transform duration-300 hover:scale-105"
         />

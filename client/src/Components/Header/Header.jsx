@@ -75,12 +75,12 @@ function Header() {
               </li>
               <li className="flex items-center mr-4 space-x-2">
                 <Link to={`/profile/${userData?._id}`}>
-                <div
-                  className="w-10 cursor-pointer h-10 bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
-                  style={{
-                    backgroundImage: `url(${userData?.profileImage || 'https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'})`,
-                  }}
-                ></div>
+                  <div
+                    className="w-10 cursor-pointer h-10 bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
+                    style={{
+                      backgroundImage: `url(${userData?.profileImage || 'https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'})`,
+                    }}
+                  ></div>
                 </Link>
               </li>
             </>
@@ -114,13 +114,20 @@ function Header() {
               <li>
                 <LogoutBtn />
               </li>
-              <li className="mr-4 flex items-center space-x-2">
-                <img
-                  src='https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'
-                  alt="User Profile"
-                  className="w-8 h-8 cursor-pointer rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
-                />
-              </li> 
+              <li>
+                <Link
+                  to={`/profile/${userData?._id}`}
+                  onClick={() => setIsMobileNavVisible(false)}
+                >
+                  <button className="flex items-center space-x-2">
+                    <img
+                      src="https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg"
+                      alt="User Profile"
+                      className=" ml-5 w-[3.5rem] cursor-pointer rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
+                    />
+                  </button>
+                </Link>
+              </li>
             </>
           )}
         </ul>
