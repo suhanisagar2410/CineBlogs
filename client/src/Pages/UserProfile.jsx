@@ -18,7 +18,7 @@ export default function UserProfile() {
 
   const getUser = async () => {
     if (!appUser) return;
-    setLoading(true);
+    if(!isLoading) setLoading(true);
     try {
       const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/users/get-user/${userId}`, {
         headers: {
@@ -40,16 +40,23 @@ export default function UserProfile() {
   };
   const handleFollow = async () => {
     try {
+      setLoading(true)
         const response = await createFollow(userId, authToken);
         setIsFollowing((prev)=> !prev)
-        console.log(response.message)
-        toast.success(response.message);
+        toast.success(response.message, {
+          autoClose: 1000,
+          style: {
+            backgroundColor: "#2e1065",
+            color: "#ffffff",
+          },
+          hideProgressBar: true,
+        });
         setIsClicked(true);
     } catch (error) {
+      setLoading(false)
       console.log(error);
     }
   };
-console.log(isFollowing)
   useEffect(() => {
     if (appUser) {
       getUser();

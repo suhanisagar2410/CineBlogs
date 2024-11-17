@@ -24,7 +24,7 @@ function HomePage() {
       setCurrentPage(1);
       setPosts([]);
       fetchPosts(1, e.target.value); 
-    }, 2000); 
+    }, 800); 
 
     setTimer(newTimer);
   };

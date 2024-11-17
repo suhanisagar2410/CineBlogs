@@ -63,7 +63,14 @@ export default function PostForm({ post }) {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                toast.success("Post updated successfully!");
+                toast.success("Post updated successfully!", {
+                    autoClose: 1000,
+                    style: {
+                      backgroundColor: "#2e1065",
+                      color: "#ffffff",
+                    },
+                    hideProgressBar: true,
+                  });
             } else {
                 // Create new post
                 response = await axios.post(
@@ -73,14 +80,27 @@ export default function PostForm({ post }) {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                toast.success("Post created successfully!");
+                toast.success("Post created successfully!", {
+                    autoClose: 1000,
+                    style: {
+                      backgroundColor: "#2e1065",
+                      color: "#ffffff",
+                    },
+                    hideProgressBar: true,
+                  });
             }
-
             setLoading(false);
             navigate(`/post/${response.data.data._id}`);
         } catch (error) {
             setLoading(false);
-            toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+            toast.error(error.response?.data?.message || "An error occurred. Please try again.", {
+                autoClose: 1000,
+                style: {
+                  backgroundColor: "#2e1065",
+                  color: "#ffffff",
+                },
+                hideProgressBar: true,
+              });
             console.error(error);
         }
     };
