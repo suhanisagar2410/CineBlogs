@@ -13,7 +13,6 @@ export default function UserProfile() {
   const [isLoading, setLoading] = useState(false);
   const [isAuthor, setIsAuthor] = useState(false);
   const appUser = useSelector((state) => state.Auth.userData);
-  const [isClicked, setIsClicked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false)
 
   const getUser = async () => {
@@ -51,7 +50,6 @@ export default function UserProfile() {
           },
           hideProgressBar: true,
         });
-        setIsClicked(true);
     } catch (error) {
       setLoading(false)
       console.log(error);

@@ -8,9 +8,27 @@ const followschema = new Schema(
         required: true
     },
     follower: {
+      _id: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      profileImage: {
+        type: String,
+        default: "https://via.placeholder.com/150",
+      },
+    },
+    followedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }
