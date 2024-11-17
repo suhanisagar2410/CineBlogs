@@ -107,7 +107,7 @@ export default function PostForm({ post }) {
 
     if (isLoading) {
         return (
-            <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+            <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
                 <div className="p-4 w-full flex flex-col justify-center items-center">
                     <h1 className="text-4xl font-semibold text-white">
                         "Patience, the Best Stories Are Worth the Wait."

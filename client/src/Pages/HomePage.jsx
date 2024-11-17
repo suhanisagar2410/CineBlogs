@@ -24,13 +24,12 @@ function HomePage() {
       setCurrentPage(1);
       setPosts([]);
       fetchPosts(1, e.target.value); 
-    }, 800); 
+    }, 3000); 
 
     setTimer(newTimer);
   };
 
   const fetchPosts = async (page = 1, search = "") => {
-    
     setLoading(true);
     const authToken = localStorage.getItem("authToken");
     try {
@@ -52,6 +51,13 @@ function HomePage() {
     const nextPage = currentPage + 1;
     setCurrentPage(nextPage); 
     fetchPosts(nextPage, searchQuery); 
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
+    setPosts([]);
+    fetchPosts(1);
   };
 
   const userStatus = useSelector((state) => state.Auth.status);
@@ -92,9 +98,13 @@ function HomePage() {
   }
 
   return (
-    <div className="w-full bg-gradient-to-b from-black via-purple-950 to-black py-12">
+    <div className="w-full bg-gradient-to-b from-black via-[#14061F] to-black py-12">
       <div className="w-full flex justify-center items-center mb-8">
-        <SearchBar searchQuery={searchQuery} handleSearchChange={handleSearchChange} />
+        <SearchBar
+          searchQuery={searchQuery}
+          handleSearchChange={handleSearchChange}
+          onClearSearch={handleClearSearch}
+        />
       </div>
       <div className="text-center mb-8">
         <h2 className="text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -119,7 +129,7 @@ function HomePage() {
         <div className="flex justify-center mt-8">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700"
+             className="load-more-btn"
           >
             Load More
           </button>

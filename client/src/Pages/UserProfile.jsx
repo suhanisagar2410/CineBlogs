@@ -85,7 +85,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-black via-purple-950 to-black min-h-screen flex flex-col items-center py-12 px-4">
+    <div className="bg-gradient-to-b from-black via-[#14061F] to-black min-h-screen flex flex-col items-center py-12 px-4">
       <div className="w-full max-w-[40rem] bg-gradient-to-b from-purple-800 to-indigo-900 rounded-xl shadow-lg p-8 text-white text-center">
         <img
           src={userData?.profileImage || "https://via.placeholder.com/150"}

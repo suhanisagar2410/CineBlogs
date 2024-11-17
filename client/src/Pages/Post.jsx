@@ -56,7 +56,7 @@ export default function Post() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-gray-950 to-black py-12">
         <div className="p-4 w-full flex flex-col justify-center items-center">
           <h1 className="text-4xl font-semibold text-white">
             "Patience, the Best Stories Are Worth the Wait."
@@ -90,7 +90,7 @@ export default function Post() {
   }
 
   return post ? (
-    <div className={`bg-gradient-to-b from-black via-purple-900 to-black min-h-screen flex flex-col items-center relative ${isAuthor ? 'py-10' : 'py-0'}`}>
+    <div className={`bg-gradient-to-b from-black via-[#14061F] to-black min-h-screen flex flex-col items-center relative ${isAuthor ? 'py-10' : 'py-0'}`}>
       {isAuthor && (
         <div className="absolute top-8 right-8 sm:right-10 flex gap-4">
           <Link to={`/edit-post/${post._id}`}>

@@ -79,7 +79,7 @@ function AllPosts() {
   }
 
   return (
-    <div className="w-full bg-gradient-to-b from-black via-purple-950 to-black py-12">
+    <div className="w-full bg-gradient-to-b from-black via-[#14061F] to-black py-12">
       <div className="sm:ml-5 w-full h-full flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
         {posts?.map((post) => (
           <div

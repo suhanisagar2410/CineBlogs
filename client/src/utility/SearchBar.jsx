@@ -1,7 +1,8 @@
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear'; // Import ClearIcon
 
-function SearchBar({ searchQuery, handleSearchChange }) {
+function SearchBar({ searchQuery, handleSearchChange, onClearSearch }) {
   return (
     <TextField
       label="Search Posts"
@@ -12,7 +13,14 @@ function SearchBar({ searchQuery, handleSearchChange }) {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <SearchIcon sx={{ color: 'white' }} />
+            {searchQuery ? (
+              <ClearIcon 
+                sx={{ color: 'white', cursor: 'pointer' }} 
+                onClick={onClearSearch}
+              />
+            ) : (
+              <SearchIcon sx={{ color: 'white' }} />
+            )}
           </InputAdornment>
         ),
         sx: {
@@ -34,11 +42,9 @@ function SearchBar({ searchQuery, handleSearchChange }) {
           '&.Mui-focused fieldset': {
             borderColor: 'white',
           },
-
         },
-        
         '& .MuiFormLabel-colorPrimary': {
-          color: 'white !important', 
+          color: 'white !important',
         },
       }}
       className="rounded-lg"

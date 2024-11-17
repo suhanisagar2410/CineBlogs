@@ -1,16 +1,40 @@
 /* Slide-down animation for mobile navbar */
 @keyframes slideDown {
-    from {
-      transform: translateY(-10%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  from {
+    transform: translateY(-10%);
+    opacity: 0;
   }
-  
-  .slide-down {
-    animation: slideDown 0.3s ease forwards;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease forwards;
+}
+
+.load-more-btn {
+position: relative;
+padding: 12px 30px;
+background: linear-gradient(45deg, #9b4dca, #6f42c1);
+border-radius: 30px;
+border: none;
+color: white;
+font-size: 16px;
+font-weight: bold;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.3s ease-in-out;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.load-more-btn:hover {
+transform: scale(1.1); 
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+background: linear-gradient(45deg, #6f42c1, #9b4dca);
+}
+
+.load-more-btn:active {
+transform: scale(1.05);
+}

@@ -34,7 +34,7 @@ function Header() {
   }, [mobileNavRef]);
 
   return (
-    <header className="py-3 px-6 lg:px-16 shadow bg-black text-white relative">
+    <header className="py-3 px-6 lg:px-16 shadow bg-transparent text-white relative">
       <nav className="flex items-center justify-between">
         {/* Logo */}
         <div className="mr-4">
@@ -55,7 +55,7 @@ function Header() {
         </button>
 
         {/* Desktop Navbar Links */}
-        <ul className="hidden lg:flex space-x-4 ml-auto">
+        <ul className="hidden lg:flex space-x-4 ml-auto bg-transparent">
           {navItems.map((item) =>
             item.active ? (
               <li key={item.name}>
