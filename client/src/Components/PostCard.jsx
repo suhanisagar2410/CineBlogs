@@ -5,7 +5,7 @@ function PostCard({ _id, title, image }) {
   return (
     <Link
       to={`/post/${_id}`}
-      className="block w-full transition-transform duration-200 hover:scale-[1.02]"
+      className="flex justify-center transition-transform duration-200 hover:scale-[1.02]"
     >
       <div className="sm:w-[15rem] w-[18rem] h-[20rem] bg-gray-800 border border-gray-700 text-white rounded-lg shadow-md hover:shadow-lg transform transition-shadow duration-200 ease-in-out overflow-hidden">
         

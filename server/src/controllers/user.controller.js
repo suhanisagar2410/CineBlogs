@@ -113,7 +113,6 @@ const getUserById = async (req, res) => {
             ...user.toObject(),
             followers: followers.length > 0 ? followers : [],
         };
-        console.log(userData)
         return successResponse({ res, message: "User found successfully", data: userData });
     } catch (error) {
         return catchResponse(res, "Error occurred in get user by id", error.message);

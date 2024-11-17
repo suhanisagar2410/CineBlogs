@@ -6,7 +6,6 @@ import LogoutBtn from "./Header/LogoutBtn";
 import Login from "../Components/Login";
 import PostForm from "./Post-Form";
 import PostCard from "./PostCard";
-import RTE from "./RTE";
 import Select from "./Select";
 import SignUp from "./SignUp";
 import Button from "./Button";
@@ -20,7 +19,6 @@ export {
   LogoutBtn,
   Login,
   PostForm,
-  RTE,
   Select,
   SignUp,
   PostCard,
