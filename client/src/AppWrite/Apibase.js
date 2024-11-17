@@ -142,8 +142,6 @@ export const getPosts = async (
   category = ""
 ) => {
   try {
-    console.log("Search from API base ",search);
-    
     const response = await axios.get(`${apiBaseUrl}/api/v1/posts/get-posts`, {
       params: {
         page,
@@ -186,7 +184,7 @@ export const deletePost = async (postId) => {
   try {
     const token = localStorage.getItem("authToken");
     const response = await axios.delete(
-      `${apiBaseUrl}/api/v1/posts/${postId}`,
+      `${apiBaseUrl}/api/v1/posts/delete-post/${postId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -195,6 +193,7 @@ export const deletePost = async (postId) => {
     );
     return response.data;
   } catch (error) {
+    console.log(error)
     throw new Error(
       error.response?.data?.message || "Failed to delete the post"
     );
@@ -232,5 +231,25 @@ export const createPost = async (postData, token) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to create post");
+  }
+};
+
+export const createFollow = async (followId, token) => {
+  try {
+    console.log('authttoken', token)
+    const response = await axios.post(
+      `${apiBaseUrl}/api/v1/users/follow/${followId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.log(error)
+    throw new Error(error.response?.data?.message || "Failed to create follow");
   }
 };

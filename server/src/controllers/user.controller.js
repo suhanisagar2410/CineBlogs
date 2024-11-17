@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js"
 import joi from "joi"
 import mongoose from "mongoose"
+import { Follow } from "../models/followers.model.js"
 import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
@@ -106,10 +107,49 @@ const getUserById = async (req, res) => {
         }
         const user = await User.findOne({_id: userId}, '-password -__v')
         if (!user) return errorResponse(res, "User not found");
-        return successResponse({ res, message: "User found successfully", data: user });
+
+        const followers = await Follow.find({userId})
+        const userData = {
+            ...user.toObject(),
+            followers: followers.length > 0 ? followers : [],
+        };
+        console.log(userData)
+        return successResponse({ res, message: "User found successfully", data: userData });
     } catch (error) {
         return catchResponse(res, "Error occurred in get user by id", error.message);
     }
+}
+
+const follow = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const followId = req.params.followId;
+
+        if (!userId || !followId) {
+            return errorResponse(res, "FollowId is required");
+        }
+
+        if (!mongoose.isValidObjectId(followId)) {
+            return  errorResponse(res, "Invalid followId");
+        }
+
+        if (userId === followId) {
+            return errorResponse(res, "You cannot follow yourself");
+        }
+
+        const followObj = await Follow.findOne({userId : followId, follower: userId})
+        if(followObj){
+            await Follow.findOneAndDelete({userId : followId, follower: userId})
+            return successResponse({ res, message: "Unfollowed successfully", data: {} });
+        }
+        else{
+            await Follow.create({userId : followId, follower: userId})
+            return successResponse({ res, message: "Followed successfully", data: {} });
+        }
+      } catch (error) {
+        console.log(error)
+        return catchResponse(res, "Error occurred in following", error.message);
+      }
 }
 
 export {
@@ -117,5 +157,6 @@ export {
     login,
     logOut,
     getUserById,
-    getCurrentUser
+    getCurrentUser,
+    follow
 }

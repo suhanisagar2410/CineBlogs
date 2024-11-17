@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Select } from "./index";
@@ -7,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ScaleLoader } from "react-spinners"; // For loading spinner
+import { ScaleLoader } from "react-spinners";
 
-// API interaction functions can be directly written with axios
 export default function PostForm({ post }) {
     const { register, handleSubmit, setValue } = useForm({
         defaultValues: {
@@ -28,7 +25,7 @@ export default function PostForm({ post }) {
     const token = localStorage.getItem("authToken");
 
     useEffect(() => {
-        if (!movie) navigate('/add-post'); // If no movie data is available, redirect
+        if (!movie) navigate('/add-post');
     }, [movie, navigate]);
 
     useEffect(() => {
@@ -40,7 +37,7 @@ export default function PostForm({ post }) {
     }, [post, setValue]);
 
     const submit = async (data) => {
-        setLoading(true); // Set loading state
+        setLoading(true);
         try {
             const postData = post
             ? {
@@ -79,8 +76,8 @@ export default function PostForm({ post }) {
                 toast.success("Post created successfully!");
             }
 
-            setLoading(false); // Hide loading spinner
-            navigate(`/post/${response.data.data._id}`); // Redirect to post details page
+            setLoading(false);
+            navigate(`/post/${response.data.data._id}`);
         } catch (error) {
             setLoading(false);
             toast.error(error.response?.data?.message || "An error occurred. Please try again.");
@@ -118,7 +115,6 @@ export default function PostForm({ post }) {
             </div>
 
             <div className="flex flex-col items-center gap-8 sm:gap-6">
-                {/* Textarea for content */}
                 <div className="w-full sm:w-[50rem]">
                     <textarea
                         className="w-full h-[20rem] p-5 rounded-lg text-gray-800 bg-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-300 ease-in-out transform hover:scale-105"

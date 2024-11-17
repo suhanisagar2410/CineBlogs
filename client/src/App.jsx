@@ -25,9 +25,9 @@ function App() {
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((response) => {
+        .then(async (response) => {
           if (response.data && response.data.data) {
-            dispatch(Login({ user: response.data.data, token: token }));
+            await dispatch(Login({ user: response.data.data, token: token }));
           }
         })
         .catch((error) => {

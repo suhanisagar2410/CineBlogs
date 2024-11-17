@@ -4,7 +4,7 @@ import axios from "axios";
 import { Button } from "../Components";
 import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
-import { deletePost, getPostById } from "../AppWrite/Apibase";
+import { deletePost, getPostById } from "../AppWrite/Apibase.js";
 import { toast } from "react-toastify";
 
 export default function Post() {

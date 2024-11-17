@@ -105,7 +105,7 @@ function HomePage() {
           you’ve never seen before.
         </p>
       </div>
-      <div className="ml-[2rem] h-full flex flex-wrap sm:justify-start justify-center items-center gap-4 transition-all duration-500">
+      <div className="sm:ml-5 w-full h-full flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
         {posts?.map((post) => (
           <div
             key={post._id}
