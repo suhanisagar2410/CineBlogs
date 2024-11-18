@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js"
 import joi from "joi"
 import mongoose from "mongoose"
 import { Follow } from "../models/followers.model.js"
-import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry } from "../utils/functions.js"
+import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry, deleteImage } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
     email: joi.string().email().required(),
@@ -176,11 +176,62 @@ const follow = async (req, res) => {
   }
 };
 
+const updateUserProfile = async (req, res) => {
+  try {
+    const { bio, username, email } = req.body;
+    const userId = req.user._id;
+
+    const existingUser = await User.findById(userId);
+    if (!existingUser) return errorResponse(res, "User not found");
+
+    if (email && email !== existingUser.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) return errorResponse(res, "Email is already in use by another account");
+    }
+
+    let profileImageUrl = existingUser.profileImage;
+
+    if (req.file) {
+
+      if (existingUser.profileImage) {
+        const publicId = existingUser.profileImage.split('/').pop().split('.')[0];
+        await deleteImage(publicId);
+      }
+      
+      const uploadResult = await uploadOnCloudinry(req.file.path);
+      if (!uploadResult) return errorResponse(res, "Failed to upload the new image");
+
+      profileImageUrl = uploadResult.url;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio, username, email, profileImage: profileImageUrl },
+      { new: true }
+    );
+
+    const userResponse = updatedUser.toObject();
+    delete userResponse.password;
+
+    return successResponse({
+      res,
+      message: "Profile updated successfully",
+      data: updatedUser
+    });
+
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return catchResponse(res, "updating profile", error.message);
+
+  }
+};
+
 export {
     createUser,
     login,
     logOut,
     getUserById,
     getCurrentUser,
-    follow
+    follow,
+    updateUserProfile
 }

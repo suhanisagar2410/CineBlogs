@@ -50,6 +50,43 @@ export const loginUser = async (values) => {
   }
 };
 
+export const updateUserProfile = async (formData, authToken) => {
+  try {
+    const response = await axios.put(
+      `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/users/update-profile`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    return response.data; 
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Error updating profile"
+    );
+  }
+};
+
+export const getUserData = async (userId, authToken) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api/v1/users/get-user/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || 'Error fetching user data'
+    );
+  }
+};
+
 export const getAllPostsInHomePage = async (authToken, search, page) => {
   try {
     const params = {

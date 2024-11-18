@@ -44,14 +44,31 @@ cloudinary.config({
     api_secret: "2bgDKqXAT7gMCOVmGZ2LDwzl_Q8",
 });
 
-export const uploadOnCloudinry = async (imagePath) => {
-    if (!imagePath) return null;
-    try {
-        const response = await cloudinary.uploader.upload(imagePath);
-        fs.unlinkSync(imagePath)
-        return response.url;
-    } catch (error) {
-        fs.unlinkSync(imagePath)
-        return new Error(error);
-    }
+export const uploadOnCloudinry = (filePath) => {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(filePath, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error("Failed to delete local file", err);
+            } else {
+              console.log("Local file deleted successfully.");
+            }
+          });
+          resolve(result);
+        }
+      });
+    });
 };
+
+  export const deleteImage = (publicId) => {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) reject(error);
+        resolve(result);
+      });
+    });
+  };
+  
