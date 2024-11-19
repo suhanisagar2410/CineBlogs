@@ -121,10 +121,9 @@ const getUserById = async (req, res) => {
 
 const follow = async (req, res) => {
   try {
-    const userId = req.user._id; // Current logged-in user
-    const followId = req.params.followId; // ID of the user to follow/unfollow
+    const userId = req.user._id;
+    const followId = req.params.followId;
 
-    // Validations
     if (!userId || !followId) {
       return errorResponse(res, "FollowId is required");
     }
@@ -137,27 +136,23 @@ const follow = async (req, res) => {
       return errorResponse(res, "You cannot follow yourself");
     }
 
-    // Get the follower's details (current user)
     const follower = await User.findById(userId);
     if (!follower) {
       return errorResponse(res, "User not found");
     }
 
-    // Check if the follow relationship already exists
     const followObj = await Follow.findOne({
       userId: followId,
       "follower._id": follower._id,
     });
 
     if (followObj) {
-      // If follow relationship exists, delete it (unfollow)
       await Follow.findOneAndDelete({
         userId: followId,
         "follower._id": follower._id,
       });
       return successResponse({ res, message: "Unfollowed successfully", data: {} });
     } else {
-      // If follow relationship doesn't exist, create it (follow)
       await Follow.create({
         userId: followId,
         follower: {
@@ -175,11 +170,62 @@ const follow = async (req, res) => {
   }
 };
 
+const updateUserProfile = async (req, res) => {
+  try {
+    const { bio, username, email } = req.body;
+    const userId = req.user._id;
+
+    const existingUser = await User.findById(userId);
+    if (!existingUser) return errorResponse(res, "User not found");
+
+    if (email && email !== existingUser.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) return errorResponse(res, "Email is already in use by another account");
+    }
+
+    let profileImageUrl = existingUser.profileImage;
+
+    if (req.file) {
+
+      if (existingUser.profileImage) {
+        const publicId = existingUser.profileImage.split('/').pop().split('.')[0];
+        await deleteImage(publicId);
+      }
+      
+      const uploadResult = await uploadOnCloudinry(req.file.path);
+      if (!uploadResult) return errorResponse(res, "Failed to upload the new image");
+
+      profileImageUrl = uploadResult.url;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio, username, email, profileImage: profileImageUrl },
+      { new: true }
+    );
+
+    const userResponse = updatedUser.toObject();
+    delete userResponse.password;
+
+    return successResponse({
+      res,
+      message: "Profile updated successfully",
+      data: updatedUser
+    });
+
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return catchResponse(res, "updating profile", error.message);
+
+  }
+};
+
 export {
     createUser,
     login,
     logOut,
     getUserById,
     getCurrentUser,
-    follow
+    follow,
+    updateUserProfile
 }

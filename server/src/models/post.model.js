@@ -22,6 +22,14 @@ const postschema = new Schema(
         type: String,
         required: true,
       },
+    likes: {
+        type: Number,
+        required: true,
+      },
+    dislikes: {
+        type: Number,
+        required: true,
+      },
     image:{
         type: String,
     },

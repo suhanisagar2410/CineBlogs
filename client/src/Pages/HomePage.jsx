@@ -7,7 +7,7 @@ import SearchBar from "../utility/SearchBar";
 
 function HomePage() {
   const [posts, setPosts] = useState([]); 
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0); 
