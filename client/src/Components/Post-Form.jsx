@@ -20,7 +20,6 @@ export default function PostForm({ post }) {
     const [isLoading, setLoading] = useState(false);
     const navigate = useNavigate();
     const movie = useSelector((state) => state.Auth.movie);
-    console.log(movie, '/////')
     const userData = useSelector((state) => state.Auth.userData);
     const token = localStorage.getItem("authToken");
 

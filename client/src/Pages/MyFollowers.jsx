@@ -17,7 +17,6 @@ const MyFollowers = ({ followers }) => {
               Authorization: `Bearer ${authToken}`,
             },
           });
-          console.log(response)
           const user = response.data.data;
           setUser(user);
           setLoading(false);
