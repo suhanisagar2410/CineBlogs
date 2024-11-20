@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
+import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify';
 import { IconButton, Stack, Avatar, Typography } from '@mui/material';
 import { Edit as EditIcon, Done as DoneIcon, CameraAlt as CameraAltIcon } from '@mui/icons-material';
@@ -41,6 +42,9 @@ export default function UserProfile() {
       setEmail(data.data?.email || '');
       setIsFollowing(data.data?.followers?.some((follow) => follow.follower._id === appUser?._id) || false);
       setIsAuthor(data.data?._id === appUser?._id);
+      if(data.data?._id === appUser?._id){
+        await dispatch(Login({ user: response.data.data, token: authToken }));
+      }
       setLoading(false);
     } catch (error) {
       console.error(error);

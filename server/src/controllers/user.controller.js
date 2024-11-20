@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js"
 import joi from "joi"
 import mongoose from "mongoose"
 import { Follow } from "../models/followers.model.js"
-import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry } from "../utils/functions.js"
+import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry, deleteImage } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
     email: joi.string().email().required(),
