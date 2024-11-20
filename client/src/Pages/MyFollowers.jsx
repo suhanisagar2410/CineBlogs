@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
-const MyFollowers = ({ followers }) => {
+import { ScaleLoader } from 'react-spinners';
+ 
+const MyFollowers = () => {
     const [user, setUser] = useState(null)
     const { userId } = useParams();
     const authToken = localStorage.getItem('authToken');
@@ -30,11 +31,26 @@ const MyFollowers = ({ followers }) => {
           getUser();
       }, [userId]);
 
-
-
+      if (isLoading) {
+        return (
+          <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
+            <div className="p-4 w-full flex flex-col justify-center items-center">
+              <h1 className="text-4xl font-semibold text-white">
+                "Patience, the Best Stories Are Worth the Wait."
+              </h1>
+              <p className="text-lg mt-2 text-gray-300">
+                We’re brewing something great! Check back soon for fresh content.
+              </p>
+            </div>
+            <div className='mt-[5rem]'>
+              <ScaleLoader color="#ffffff" height={50} />
+            </div>
+          </div>
+        );
+      }
 
       return (
-        <div className="w-full min-h-screen flex flex-col justify-start items-center bg-gradient-to-b from-black via-[#14061F] to-black py-16 px-8">
+        <div className="w-full min-h-screen flex flex-col justify-start bg-gradient-to-b from-black via-[#14061F] to-black py-16 px-">
       
           {/* No Followers message */}
           {user?.followers?.length === 0 ? (
@@ -42,11 +58,11 @@ const MyFollowers = ({ followers }) => {
               You have no followers yet. Start following people to build your network!
             </p>
           ) : (
-            <div className="w-full max-w-screen-xl grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="sm:ml-[4rem] w-full max-w-screen-xl grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {user?.followers.map((follower, index) => (
                 <div
                   key={index}
-                  className="relative bg-white p-4 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:scale-105"
+                  className="relative bg-white p-4 mx-7 sm:mx-0 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:scale-105"
                 >
                   {/* Profile Image */}
                   <div

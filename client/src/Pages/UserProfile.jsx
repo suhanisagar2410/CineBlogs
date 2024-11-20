@@ -8,6 +8,7 @@ import { IconButton, Stack, Avatar, Typography } from '@mui/material';
 import { Edit as EditIcon, Done as DoneIcon, CameraAlt as CameraAltIcon } from '@mui/icons-material';
 import MuiInput from '../utility/CustomeInput';
 import { createFollow, getUserData, updateUserProfile } from '../AppWrite/Apibase';
+import { Login } from "../Store/AuthSlice.js"
 
 export default function UserProfile() {
   const [userData, setUser] = useState(null);
@@ -22,6 +23,7 @@ export default function UserProfile() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const dispatch = useDispatch()
 
   const appUser = useSelector((state) => state.Auth.userData);
 
@@ -32,20 +34,16 @@ export default function UserProfile() {
   ];
 
   const getUser = async () => {
-    if(!isLoading) setLoading(true);
+    setLoading(true);
     if (!appUser) return;
     try {
       const data = await getUserData(userId, authToken)
-      setUser(data.data); 
+      setUser(data.data);
       setBio(data.data?.bio || '');
       setUsername(data.data?.username || '');
       setEmail(data.data?.email || '');
       setIsFollowing(data.data?.followers?.some((follow) => follow.follower._id === appUser?._id) || false);
       setIsAuthor(data.data?._id === appUser?._id);
-      if(data.data?._id === appUser?._id){
-        await dispatch(Login({ user: response.data.data, token: authToken }));
-      }
-      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -72,7 +70,9 @@ export default function UserProfile() {
   };
 
   const handleEdit = () => {
+    setLoading(true);
     if (isEdit) {
+      setLoading(true);
       const formData = new FormData();
       formData.append('bio', bio);
       formData.append('username', username);
@@ -80,19 +80,34 @@ export default function UserProfile() {
       if (selectedImage) {
         formData.append('profileImage', selectedImage);
       }
-
-      setLoading(true); 
-
+      setLoading(true);
       updateUserProfile(formData, authToken)
         .then((response) => {
           setUser(response.data);
-          toast.success('Profile updated successfully!');
+          if (isAuthor) {
+            dispatch(Login({ user: response.data, token: authToken }));
+          }
+          toast.success("Profile updated successfully!", {
+            autoClose: 1000,
+            style: {
+              backgroundColor: "#2e1065",
+              color: "#ffffff",
+            },
+            hideProgressBar: true,
+          });
           setLoading(false);
         })
         .catch((error) => {
           console.log("Error updating profile:", error);
           setLoading(false);
-          toast.error('Error updating profile!');
+          toast.error("Error updating profile!", {
+            autoClose: 1000,
+            style: {
+              backgroundColor: "#2e1065",
+              color: "#ffffff",
+            },
+            hideProgressBar: true,
+          });
         });
     }
     setIsEdit(!isEdit);
@@ -106,29 +121,30 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
-    if(!isLoading) setLoading(true);
+    setLoading(true);
     if (appUser) {
       getUser();
+      setLoading(false)
     }
   }, [userId, appUser, isFollowing, isClicked]);
 
   if (isLoading) {
     return (
-        <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
-            <div className="p-4 w-full flex flex-col justify-center items-center">
-                <h1 className="text-4xl font-semibold text-white">
-                    "Patience, the Best Stories Are Worth the Wait."
-                </h1>
-                <p className="text-lg mt-2 text-gray-300">
-                    We’re brewing something great! Check back soon for fresh content.
-                </p>
-            </div>
-            <div className='mt-[5rem]'>
-                <ScaleLoader color="#ffffff" height={50} />
-            </div>
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
         </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
+        </div>
+      </div>
     );
-}
+  }
 
   if (!isLoading) return (
     <div className="bg-gradient-to-b from-black via-purple-950 to-black min-h-screen flex flex-col items-center py-12 px-4">
@@ -189,10 +205,10 @@ export default function UserProfile() {
                 <DoneIcon />
               </IconButton>
             ) : (
-              isAuthor ? 
-              <IconButton onClick={() => setIsEdit(true)} sx={{ mt: 2, color: 'white' }}>
-                <EditIcon />
-              </IconButton> : null
+              isAuthor ?
+                <IconButton onClick={() => setIsEdit(true)} sx={{ mt: 2, color: 'white' }}>
+                  <EditIcon />
+                </IconButton> : null
             )}
           </div>
         </Stack>

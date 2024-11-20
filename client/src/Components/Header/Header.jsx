@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '.././../App.css';
+import ProfileDropdown from './ProfileDropdown';
 
 function Header() {
   const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
@@ -73,7 +74,7 @@ function Header() {
               <li>
                 <LogoutBtn />
               </li>
-              <li className="flex items-center mr-4 space-x-2">
+              {/* <li className="flex items-center mr-4 space-x-2">
                 <Link to={`/profile/${userData?._id}`}>
                   <div
                     className="w-10 cursor-pointer h-10 bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
@@ -82,7 +83,8 @@ function Header() {
                     }}
                   ></div>
                 </Link>
-              </li>
+              </li> */}
+              <ProfileDropdown userData={userData}/>
             </>
           )}
         </ul>

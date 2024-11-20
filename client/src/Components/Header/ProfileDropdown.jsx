@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const ProfileDropdown = ({ userData }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  console.log(userData)
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -33,7 +34,7 @@ const ProfileDropdown = ({ userData }) => {
         <div
           className="w-10 h-10 cursor-pointer bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
           style={{
-            backgroundImage: `url(${userData?.profileImage || 'https://res.cloudinary.com/dbmn2pyi4/image/upload/v1731603507/johncena_qthmut.jpg'})`,
+            backgroundImage: `url(${userData?.profileImage || 'https://via.placeholder.com/150'})`,
           }}
         ></div>
       </div>
@@ -52,12 +53,12 @@ const ProfileDropdown = ({ userData }) => {
           >
             <Link to={`/followers/${userData?._id}`}>👥 My Followers</Link>
           </li>
-          <li
+          {/* <li
             className="px-4 py-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-150 cursor-pointer rounded-b-lg"
             onClick={closeDropdown}
           >
             <Link to={`/profile/${userData?._id}/followings`}>🔗 My Followings</Link>
-          </li>
+          </li> */}
         </ul>
       )}
     </li>
