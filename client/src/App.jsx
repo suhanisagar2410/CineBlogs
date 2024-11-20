@@ -44,12 +44,6 @@ function App() {
     return (
       <div className="w-full flex flex-col justify-center items-center bg-black py-12">
         <div className="p-4 w-full flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-semibold text-white">
-            "Patience, the Best Stories Are Worth the Wait."
-          </h1>
-          <p className="text-lg mt-2 text-gray-300">
-            We’re brewing something great! Check back soon for fresh content.
-          </p>
         </div>
         <div className='mt-[5rem]'>
           <ScaleLoader color="#ffffff" height={50} />

@@ -273,7 +273,6 @@ export const createPost = async (postData, token) => {
 
 export const createFollow = async (followId, token) => {
   try {
-    console.log('authttoken', token)
     const response = await axios.post(
       `${apiBaseUrl}/api/v1/users/follow/${followId}`,
       {},
@@ -283,7 +282,6 @@ export const createFollow = async (followId, token) => {
         },
       }
     );
-    console.log(response.data)
     return response.data;
   } catch (error) {
     console.log(error)

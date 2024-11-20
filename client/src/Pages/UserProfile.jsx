@@ -31,6 +31,7 @@ export default function UserProfile() {
   ];
 
   const getUser = async () => {
+    if(!isLoading) setLoading(true);
     if (!appUser) return;
     try {
       const data = await getUserData(userId, authToken)
@@ -49,7 +50,6 @@ export default function UserProfile() {
 
   const handleFollow = async () => {
     try {
-      setIsClicked(true);
       setLoading(true);
       const response = await createFollow(userId, authToken);
       setIsFollowing((prev) => !prev);
@@ -102,7 +102,7 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
-    setLoading(true);
+    if(!isLoading) setLoading(true);
     if (appUser) {
       getUser();
     }
