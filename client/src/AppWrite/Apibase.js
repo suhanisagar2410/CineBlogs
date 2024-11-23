@@ -2,7 +2,6 @@ import axios from "axios";
 import { Logout } from "../Store/AuthSlice";
 
 const apiBaseUrl = import.meta.env.VITE_REACT_APP_API_BASE_URL;
-
 export const signupUser = async (values) => {
   try {
     const response = await axios.post(
@@ -286,5 +285,21 @@ export const createFollow = async (followId, token) => {
   } catch (error) {
     console.log(error)
     throw new Error(error.response?.data?.message || "Failed to create follow");
+  }
+};
+
+export const addLike = async (postId, token) => {
+  console.log(postId)
+  console.log(token)
+  try {
+    const response = await axios.post(`${apiBaseUrl}/api/v1/posts/like/${postId}`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    return response.data;
+  } catch (error) {
+    console.log(error)
+    throw new Error(error.response?.data?.message || "Failed to like");
   }
 };

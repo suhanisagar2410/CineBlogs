@@ -55,7 +55,7 @@ const MyFollowers = () => {
           {/* No Followers message */}
           {user?.followers?.length === 0 ? (
             <p className="text-xl text-white text-center mb-10">
-              You have no followers yet. Start following people to build your network!
+              You have no followers yet. Start posting content to build your network!
             </p>
           ) : (
             <div className="sm:ml-[4rem] w-full max-w-screen-xl grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

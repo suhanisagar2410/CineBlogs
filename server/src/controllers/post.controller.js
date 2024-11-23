@@ -2,7 +2,7 @@ import Joi from "joi"
 import { Post } from "../models/post.model.js"
 import { errorResponse, successResponse, catchResponse, uploadOnCloudinry } from "../utils/functions.js"
 import { User } from "../models/user.model.js"
-
+import mongoose from "mongoose"
 
 const postValidation = Joi.object({
     userId: Joi.string().required(),
@@ -136,11 +136,93 @@ const deletePost = async (req, res) => {
     }
 }
 
+const addLike = async (req, res)=>{
+    try {
+        const postId = req.params.postId
+        const user = req.user
+        if(!mongoose.isValidObjectId(postId)){
+            return errorResponse(res, "Invalid post id")
+        }
+
+        const likeExists = await Post.findOne({
+          _id: postId,
+          likes: {
+            $elemMatch: {
+              userId: user._id,
+            },
+          },
+        });
+
+        if(likeExists){
+          await Post.updateOne(
+            { _id: postId },
+            {
+              $pull: {
+                likes: { userId: user._id },
+              },
+            }
+          );
+          return successResponse({ res, message: "Like deleted successfully", data: {} });
+        }
+        else{
+          const updatedPost = await Post.updateOne({_id: postId},{
+            $push: {
+              likes: {
+                userId: user._id,
+                profileImage: user.profileImage,
+                email: user.email,
+                username: user.username
+              }
+            }
+          })
+          
+      if(updatedPost.modifiedCount !== 1){
+        return errorResponse(res, "Post not liked")
+      }
+      return successResponse({ res, message: "Liked", data: {} });
+    }
+
+    } catch (error) {
+      console.log(error)
+      return catchResponse(res, "Error occurred in like", error);
+    }
+}
+
+const addDislike = async (req, res)=>{
+  try {
+      const postId = req.params.postId
+      const user = req.user
+      if(!mongoose.isValidObjectId(postId)){
+          return errorResponse(res, "Invalid post id", )
+      }
+
+    const updatedPost = await Post.updateOne({_id: postId},{
+        $push: {
+          dislikes: {
+            userId: user._id,
+            profileImage: user.profileImage,
+            email: user.email,
+            username: user.username
+          }
+        }
+      })
+
+    if(updatedPost.modifiedCount !== 1){
+      return errorResponse(res, "Post not disliked")
+    }
+    return successResponse({ res, message: "Disliked", data: {} });
+  } catch (error) {
+    return catchResponse(res, "Error occurred in dislike", error);
+  }
+}
+
 export {
     createPost,
     getAllPosts,
     getAllPostsOfUser,
     updatePost,
     deletePost,
-    getPostById
+    getPostById,
+    addLike,
+    addDislike
 }

@@ -46,7 +46,7 @@ function Signup() {
         localStorage.setItem("authToken", token);
 
         toast.success("User created successfully!");
-        navigate("/login");
+        navigate("/");
       } catch (error) {
         console.error("Signup error:", error);
         setError(error.message || "An error occurred!");

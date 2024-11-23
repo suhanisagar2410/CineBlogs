@@ -11,7 +11,6 @@ const userSchema = new Schema(
     },
     bio: {
       type: String,
-      required: true,
       trim: true,
     },
     email: {
@@ -23,7 +22,6 @@ const userSchema = new Schema(
     },
     profileImage: {
       type: String,
-      required: true,
     },
     password: {
       type: String,

@@ -3,9 +3,9 @@ import mongoose, { Schema } from "mongoose";
 const postschema = new Schema(
   {
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     },
     title: {
       type: String,
@@ -19,23 +19,47 @@ const postschema = new Schema(
       // index: true,
     },
     content: {
-        type: String,
-        required: true,
-      },
-    likes: {
-        type: Number,
-        required: true,
-      },
-    dislikes: {
-        type: Number,
-        required: true,
-      },
-    image:{
-        type: String,
+      type: String,
+      required: true,
     },
-    status:{
-        type: Boolean,
+    likes: [{
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true,
+      },
+      profileImage: {
+        type: String,
+      },
+      email: {
+        type: String
+      },
+      username: {
+        type: String
+      }
+    }],
+    dislikes: [{
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      profileImage: {
+        type: String,
+      },
+      email: {
+        type: String
+      },
+      username: {
+        type: String
+      }
+    }],
+    image: {
+      type: String,
+    },
+    status: {
+      type: Boolean,
+      required: true,
     }
   },
   { timestamps: true }
