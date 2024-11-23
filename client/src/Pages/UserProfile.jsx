@@ -44,6 +44,7 @@ export default function UserProfile() {
       setEmail(data.data?.email || '');
       setIsFollowing(data.data?.followers?.some((follow) => follow.follower._id === appUser?._id) || false);
       setIsAuthor(data.data?._id === appUser?._id);
+      setLoading(false)
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -124,13 +125,12 @@ export default function UserProfile() {
     setLoading(true);
     if (appUser) {
       getUser();
-      setLoading(false)
     }
   }, [userId, appUser, isFollowing, isClicked]);
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#1e022c] to-black py-12">
         <div className="p-4 w-full flex flex-col justify-center items-center">
           <h1 className="text-4xl font-semibold text-white">
             "Patience, the Best Stories Are Worth the Wait."
@@ -147,10 +147,10 @@ export default function UserProfile() {
   }
 
   if (!isLoading) return (
-    <div className="bg-gradient-to-b from-black via-purple-950 to-black min-h-screen flex flex-col items-center py-12 px-4">
-      <div className="w-full max-w-[40rem] bg-gradient-to-b from-purple-800 to-indigo-900 rounded-xl shadow-lg p-8 text-white text-center">
+    <div className="bg-transparent min-h-screen flex flex-col items-center py-12 px-4">
+      <div className="border-white border-[0.1px] shadow-sm shadow-white  w-full max-w-[40rem] bg-gradient-to-b from-black via-[#12041c] to-black rounded-xl p-8 text-white text-center">
         <Stack direct ion="column" alignItems="center">
-          <div className="relative">
+          <div className="relative">  
             <Avatar
               src={selectedImage ? URL.createObjectURL(selectedImage) : userData?.profileImage}
               sx={{
@@ -193,7 +193,7 @@ export default function UserProfile() {
                     if (name === 'email') setEmail(e.target.value);
                     if (name === 'bio') setBio(e.target.value);
                   }}
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 2,  }}
                 />
               ) : (
                 <Typography key={name} className="text-lg text-gray-300">{name === 'username' ? username : name === 'email' ? email : bio}</Typography>

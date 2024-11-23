@@ -42,7 +42,7 @@ function AllPosts() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-purple-950 to-black py-12">
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
         <div className="p-4 w-full flex flex-col justify-center items-center">
           <h1 className="text-4xl font-semibold text-white">
             "Patience, the Best Stories Are Worth the Wait."
@@ -62,7 +62,7 @@ function AllPosts() {
 
   if (posts.length === 0 && userStatus == true) {
     return (
-      <div className="w-full h-full py-8 mt-4 flex justify-center items-center bg-black from-gray-800 to-black text-center">
+      <div className="w-full h-full py-8 mt-4 flex justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black text-center">
         <div className="max-w-lg">
           <h1 className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 mb-4">
             No Posts Yet

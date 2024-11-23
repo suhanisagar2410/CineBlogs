@@ -25,6 +25,7 @@ const SearchMovie = () => {
     };
 
     return (
+        <div className='w-full h-full flex bg-gradient-to-b from-black via-[#14061F] to-blac'>
         <div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-white via-gray-100 to-gray-200 shadow-lg rounded-lg transform transition-all duration-300 hover:shadow-2xl">
             <p className="text-xl font-bold text-center text-gray-700 mb-6">Select Your Movie</p>
             <input 
@@ -61,6 +62,7 @@ const SearchMovie = () => {
                     ))}
                 </div>
             )}
+        </div>
         </div>
     );
 };

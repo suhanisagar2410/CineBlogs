@@ -32,7 +32,7 @@ const ProfileDropdown = ({ userData }) => {
     <li className="relative flex items-center mr-4 space-x-2" ref={dropdownRef}>
       <div onClick={toggleDropdown}>
         <div
-          className="w-10 h-10 cursor-pointer bg-cover bg-center rounded-full border-2 border-blue-500 hover:scale-105 transition-transform duration-200"
+          className="w-11 h-11 cursor-pointer bg-cover bg-center rounded-full border-[1px] border-white hover:scale-105 transition-transform duration-200"
           style={{
             backgroundImage: `url(${userData?.profileImage || 'https://via.placeholder.com/150'})`,
           }}
@@ -40,27 +40,31 @@ const ProfileDropdown = ({ userData }) => {
       </div>
 
       {isDropdownOpen && (
-        <ul className="absolute top-12 right-[1rem] w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 text-white">
+        <ul className="absolute top-12 right-[1rem] w-52 bg-gray-900 border border-gray-700 rounded-xl shadow-lg z-50 text-white divide-y divide-gray-700">
+          {/* Profile Link */}
           <li
-            className="px-4 py-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-150 cursor-pointer rounded-t-lg"
+            className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-t-xl"
             onClick={closeDropdown}
           >
-            <Link to={`/profile/${userData?._id}`}>🧑‍💻 My Profile</Link>
+            <span>🧑‍💻</span>
+            <Link to={`/profile/${userData?._id}`} className="text-sm font-medium">
+              My Profile
+            </Link>
           </li>
+
+          {/* Followers Link */}
           <li
-            className="px-4 py-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-150 cursor-pointer"
+            className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-b-xl"
             onClick={closeDropdown}
           >
-            <Link to={`/followers/${userData?._id}`}>👥 My Followers</Link>
+            <span>👥</span>
+            <Link to={`/followers/${userData?._id}`} className="text-sm font-medium">
+              My Followers
+            </Link>
           </li>
-          {/* <li
-            className="px-4 py-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-150 cursor-pointer rounded-b-lg"
-            onClick={closeDropdown}
-          >
-            <Link to={`/profile/${userData?._id}/followings`}>🔗 My Followings</Link>
-          </li> */}
         </ul>
       )}
+
     </li>
   );
 };

@@ -92,7 +92,7 @@ export default function Post() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-gray-950 to-black py-12">
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
         <div className="p-4 w-full flex flex-col justify-center items-center">
           <h1 className="text-4xl font-semibold text-white">
             "Patience, the Best Stories Are Worth the Wait."
@@ -127,7 +127,7 @@ export default function Post() {
 
   return post ? (
     <div
-      className={`bg-gradient-to-b from-black via-[#14061F] to-black min-h-screen flex flex-col items-center relative ${isAuthor ? "py-10" : "py-0"
+      className={`bg-gradient-to-b from-black via-[#0d0216] to-black min-h-screen flex-col relative ${isAuthor ? "py-10" : "py-0"
         }`}
     >
       {isAuthor && (
@@ -146,48 +146,86 @@ export default function Post() {
         </div>
       )}
 
-      <div className="w-full max-w-[80rem] flex flex-col items-center gap-12 text-white mt-16 sm:mt-8 px-4">
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <div className="w-full max-w-[80rem] sm:flex gap-12 text-white mt-16 sm:mt-8 px-4">
 
-        <div className="w-full flex flex-col justify-center items-center sm:items-center">
-          <div className="w-full flex justify-center sm:justify-start items-center -auto rounded-xl overflow-hidden mb-8 sm:mb-0">
-            <img
-              src={post?.image}
-              alt={post?.title}
-              className="h-[21rem] object-cover rounded-xl transition-transform duration-300 hover:scale-105"
-            />
+          <div className="sm:w-1/3 mt-5 h-[20rem] flex justify-start items-start sm:items-center">
+
+            <div className="w-full flex justify-center sm:justify-start items-center -auto rounded-xl overflow-hidden mb-8 sm:mb-0">
+              <img
+                src={post?.image}
+                alt={post?.title}
+                className="h-[21rem] object-cover rounded-xl transition-transform duration-300 hover:scale-105"
+              />
+            </div>
           </div>
 
-          {userData?._id !== post?.userId._id && (
-            <div className="w-full relative sm:bottom-[18rem] sm:left-[6rem] flex flex-col items-center sm:items-center text-gray-300">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
-                Written by
-              </h2>
-              <Link to={`/profile/${post?.userId._id}`}>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition-all duration-300">
-                  {post?.userId.username || "Unknown Author"}
-                </h3>
-              </Link>
-              <p className="text-sm sm:text-base text-gray-400 mt-2 tracking-wide">
-                {new Date(post.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          )}
-        </div>
+          {/* Post Content */}
+          <div className="w-full flex-col justify-center items-center max-w-[60rem] mt-7 text-white text-center">
+            <div className="flex justify-between items-center">
+              {!isAuthor && (
+                <div className="sm:ml-[12rem] w-full relative flex flex-col items-center sm:items-center text-gray-300">
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
+                    Written by
+                  </h2>
+                  <Link to={`/profile/${post?.userId._id}`}>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition-all duration-300">
+                      {post?.userId.username || "Unknown Author"}
+                    </h3>
+                  </Link>
+                  <p className="text-sm sm:text-base text-gray-400 mt-2 tracking-wide">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+              {!isAuthor && (
+                <div className="sm:flex hidden sm:mr-[3rem] relative gap-6 mb-8 justify-center">
+                  <button
+                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+                    onClick={handleLike}
+                    style={{
+                      borderRadius: "15px",
+                      background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                      border: "1px solid rgba(255, 255, 255, 0.8)",
+                      backdropFilter: "blur(10px)",
+                      color: "white", // Green color for the icon and text
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
+                    {likes}
+                  </button>
 
-        {/* Post Content */}
-        <div className="w-full relative sm:left-[6rem] sm:bottom-[18rem] max-w-[60rem] text-white text-center">
-          <p className="text-lg text-gray-300 px-6 sm:px-12">
-            {post.content}
-          </p>
+                  <button
+                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
+                    onClick={handleDislike}
+                    style={{
+                      borderRadius: "15px",
+                      background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                      border: "1px solid rgba(255, 255, 255, 0.8)",
+                      backdropFilter: "blur(10px)",
+                      color: "white", // Ensures icon and text are white
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
+                    {dislikes}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <p className="text-lg text-gray-300 mt-7 px-6">
+              {post.content}
+            </p>
+          </div>
         </div>
 
         {/* Like/Dislike Buttons */}
-        <div className="flex relative sm:bottom-[20rem] sm:left-[6rem] gap-6 mt-8 justify-center">
+        <div className="flex relative sm:hidden gap-6 mt-8 justify-center">
           <button
-            className={`relative px-6 py-3 text-2xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+            className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
             onClick={handleLike}
             style={{
-              borderRadius: "25px",
+              borderRadius: "20px",
               background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
               border: "1px solid rgba(255, 255, 255, 0.8)",
               backdropFilter: "blur(10px)",
@@ -199,10 +237,10 @@ export default function Post() {
           </button>
 
           <button
-            className={`relative px-6 py-3 text-2xl font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
+            className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
             onClick={handleDislike}
             style={{
-              borderRadius: "25px",
+              borderRadius: "20px",
               background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
               border: "1px solid rgba(255, 255, 255, 0.8)",
               backdropFilter: "blur(10px)",
@@ -216,5 +254,4 @@ export default function Post() {
       </div>
     </div>
   ) : null;
-
 }
