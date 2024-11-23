@@ -145,7 +145,7 @@ function Header() {
       {isMobileNavVisible && (
         <ul
           ref={mobileNavRef}
-          className="flex flex-col lg:hidden bg-gray-900 p-6 space-y-4 rounded-lg shadow-lg slide-down transform transition-transform duration-300"
+          className="absolute z-50 w-[30rem] flex-col lg:hidden bg-gray-900 p-6 space-y-4 rounded-lg shadow-lg slide-down transform transition-transform duration-300"
         >
           {/* Navigation Items */}
           {navItems.map((item) =>
