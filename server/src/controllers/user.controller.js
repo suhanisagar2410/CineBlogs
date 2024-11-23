@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js"
 import joi from "joi"
 import mongoose from "mongoose"
 import { Follow } from "../models/followers.model.js"
+import { Post } from "../models/post.model.js"
 import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry, deleteImage } from "../utils/functions.js"
 const userValidationSchema = joi.object({
     username: joi.string().min(3).max(15),
@@ -102,10 +103,13 @@ const getUserById = async (req, res) => {
         const user = await User.findOne({ _id: userId }, '-password -__v')
         if (!user) return errorResponse(res, "User not found");
 
+        const posts = await Post.countDocuments({userId: userId})
+
         const followers = await Follow.find({ userId })
         const userData = {
             ...user.toObject(),
             followers: followers.length > 0 ? followers : [],
+            posts
         };
         return successResponse({ res, message: "User found successfully", data: userData });
     } catch (error) {

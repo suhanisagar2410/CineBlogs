@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
-import { addLike, deletePost, getPostById } from "../AppWrite/Apibase.js";
+import { addLike, deletePost, getPostById, addDislike } from "../AppWrite/Apibase.js";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import the FontAwesomeIcon component
 import { faL, faThumbsDown } from '@fortawesome/free-solid-svg-icons'; // Import the icon you want to use
@@ -60,11 +60,17 @@ export default function Post() {
   };
   const handleLike = async () => {
     setLoading(true)
-      const response = await addLike( post._id, token)
+      const response = await addLike(post?._id, token)
       setUserHasLiked((prev)=> !prev)
       setLoading(false)
   };
 
+  const handleDislike = async () => {
+    setLoading(true)
+      const response = await addDislike( post?._id, token)
+      setUserHasLiked((prev)=> !prev)
+      setLoading(false)
+  };
   if (isLoading) {
     return (
       <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
@@ -99,8 +105,6 @@ export default function Post() {
       </div>
     );
   }
-
-  console.log(post)
 
   return post ? (
     <div
@@ -171,21 +175,21 @@ export default function Post() {
                     <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
                     {post?.likes?.length}
                   </button>
-{/* 
+
                   <button
-                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
+                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform`}
                     onClick={handleDislike}
                     style={{
                       borderRadius: "15px",
                       background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
                       border: "1px solid rgba(255, 255, 255, 0.8)",
                       backdropFilter: "blur(10px)",
-                      color: "white", // Ensures icon and text are white
+                      color: "white",
                     }}
                   >
                     <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-                    {dislikes}
-                  </button> */}
+                    {post?.dislikes?.length}
+                  </button>
                 </div>
               )}
             </div>
@@ -213,8 +217,8 @@ export default function Post() {
             {likes}
           </button>
 
-          {/* <button
-            className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
+          <button
+            className={`relative px-3 py-3 text-xl font-bold transition-all transform`}
             onClick={handleDislike}
             style={{
               borderRadius: "20px",
@@ -225,8 +229,8 @@ export default function Post() {
             }}
           >
             <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-            {dislikes}
-          </button> */}
+            {post?.dislikes?.length}
+          </button>
         </div>
       </div>
     </div>

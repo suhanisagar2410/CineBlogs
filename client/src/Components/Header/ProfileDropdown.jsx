@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 const ProfileDropdown = ({ userData }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  console.log(userData)
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);

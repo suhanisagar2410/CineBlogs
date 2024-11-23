@@ -289,10 +289,22 @@ export const createFollow = async (followId, token) => {
 };
 
 export const addLike = async (postId, token) => {
-  console.log(postId)
-  console.log(token)
   try {
     const response = await axios.post(`${apiBaseUrl}/api/v1/posts/like/${postId}`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    return response.data;
+  } catch (error) {
+    console.log(error)
+    throw new Error(error.response?.data?.message || "Failed to like");
+  }
+};
+
+export const addDislike = async (postId, token) => {
+  try {
+    const response = await axios.post(`${apiBaseUrl}/api/v1/posts/dislike/${postId}`,{},{
         headers: {
           Authorization: `Bearer ${token}`,
         },

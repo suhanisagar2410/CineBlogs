@@ -144,6 +144,26 @@ const addLike = async (req, res)=>{
             return errorResponse(res, "Invalid post id")
         }
 
+        const dislikeExists = await Post.findOne({
+          _id: postId,
+          dislikes: {
+            $elemMatch: {
+              userId: user._id,
+            },
+          },
+        });
+    
+        if(dislikeExists){
+          await Post.updateOne(
+            { _id: postId },
+            {
+              $pull: {
+                dislikes: { userId: user._id },
+              },
+            }
+          );
+        }
+
         const likeExists = await Post.findOne({
           _id: postId,
           likes: {
@@ -190,13 +210,53 @@ const addLike = async (req, res)=>{
 
 const addDislike = async (req, res)=>{
   try {
-      const postId = req.params.postId
-      const user = req.user
-      if(!mongoose.isValidObjectId(postId)){
-          return errorResponse(res, "Invalid post id", )
-      }
+    const postId = req.params.postId
+    const user = req.user
+    if(!mongoose.isValidObjectId(postId)){
+        return errorResponse(res, "Invalid post id")
+    }
 
-    const updatedPost = await Post.updateOne({_id: postId},{
+    const likeExists = await Post.findOne({
+      _id: postId,
+      likes: {
+        $elemMatch: {
+          userId: user._id,
+        },
+      },
+    });
+
+    if(likeExists){
+      await Post.updateOne(
+        { _id: postId },
+        {
+          $pull: {
+            likes: { userId: user._id },
+          },
+        }
+      )}
+
+    const dislikeExists = await Post.findOne({
+      _id: postId,
+      dislikes: {
+        $elemMatch: {
+          userId: user._id,
+        },
+      },
+    });
+
+    if(dislikeExists){
+      await Post.updateOne(
+        { _id: postId },
+        {
+          $pull: {
+            dislikes: { userId: user._id },
+          },
+        }
+      );
+      return successResponse({ res, message: "Dislike deleted successfully", data: {} });
+    }
+    else{
+      const updatedPost = await Post.updateOne({_id: postId},{
         $push: {
           dislikes: {
             userId: user._id,
@@ -206,14 +266,17 @@ const addDislike = async (req, res)=>{
           }
         }
       })
-
-    if(updatedPost.modifiedCount !== 1){
-      return errorResponse(res, "Post not disliked")
-    }
-    return successResponse({ res, message: "Disliked", data: {} });
-  } catch (error) {
-    return catchResponse(res, "Error occurred in dislike", error);
+      
+  if(updatedPost.modifiedCount !== 1){
+    return errorResponse(res, "Post not disliked")
   }
+  return successResponse({ res, message: "Disliked", data: {} });
+}
+
+} catch (error) {
+  console.log(error)
+  return catchResponse(res, "Error occurred in disliked", error);
+}
 }
 
 export {

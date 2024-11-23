@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify';
@@ -148,9 +148,12 @@ export default function UserProfile() {
 
   if (!isLoading) return (
     <div className="bg-transparent min-h-screen flex flex-col items-center py-12 px-4">
+
       <div className="border-white border-[0.1px] shadow-sm shadow-white  w-full max-w-[40rem] bg-gradient-to-b from-black via-[#12041c] to-black rounded-xl p-8 text-white text-center">
+
+
         <Stack direct ion="column" alignItems="center">
-          <div className="relative">  
+          <div className="relative">
             <Avatar
               src={selectedImage ? URL.createObjectURL(selectedImage) : userData?.profileImage}
               sx={{
@@ -193,7 +196,31 @@ export default function UserProfile() {
                     if (name === 'email') setEmail(e.target.value);
                     if (name === 'bio') setBio(e.target.value);
                   }}
-                  sx={{ mb: 2,  }}
+                  sx={{
+                    mb: 2,
+                    '& .MuiInputBase-input': {
+                      color: 'white',
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'white',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '&.Mui-focused': {
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'white',
+                        },
+                        '& .MuiInputLabel-root': {
+                          color: 'white',
+                        },
+                      },
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'white',
+                    },
+                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'white',
+                    },
+                  }}
                 />
               ) : (
                 <Typography key={name} className="text-lg text-gray-300">{name === 'username' ? username : name === 'email' ? email : bio}</Typography>
@@ -216,10 +243,12 @@ export default function UserProfile() {
         <div className="flex justify-around mt-6 text-gray-300">
           <div>
             <p className="text-xl font-bold">{userData?.followers?.length || 0}</p>
-            <p className="text-sm">Followers</p>
+            <Link  to={`/followers/${userData?._id}`}>
+              <p className="text-sm hover:scale-[1.05] duration-150">Followers</p>
+            </Link>
           </div>
           <div>
-            <p className="text-xl font-bold">{userData?.totalPosts || 0}</p>
+            <p className="text-xl font-bold">{userData?.posts || 0}</p>
             <p className="text-sm">Posts</p>
           </div>
         </div>

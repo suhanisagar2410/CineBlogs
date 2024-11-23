@@ -10,6 +10,7 @@ function SearchBar({ searchQuery, handleSearchChange, onClearSearch }) {
       fullWidth
       value={searchQuery}
       onChange={handleSearchChange}
+      autoComplete="off"        
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
