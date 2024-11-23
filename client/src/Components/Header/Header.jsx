@@ -1,10 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
 import { LogoutBtn } from '../index';
+import { useDispatch } from "react-redux";
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '.././../App.css';
+import { logout } from "../../AppWrite/Apibase";
+import { toast } from "react-toastify";
 import ProfileDropdown from './ProfileDropdown';
 
 function Header() {
@@ -12,9 +15,11 @@ function Header() {
   const authStatus = useSelector((state) => state.Auth.status);
   const userData = useSelector((state) => state.Auth.userData);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const mobileNavRef = useRef(null);
 
   const handleLogout = async () => {
+    console.log('clicked, //////////////////////')
     try {
       await logout(dispatch, navigate);
       toast.success("Logout Successfully...", {
@@ -41,7 +46,6 @@ function Header() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  console.log(userData)
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -143,87 +147,87 @@ function Header() {
 
       {/* Mobile Navbar */}
       {isMobileNavVisible && (
-        <ul
-          ref={mobileNavRef}
-          className="absolute z-50 w-[30rem] flex-col lg:hidden bg-gray-900 p-6 space-y-4 rounded-lg shadow-lg slide-down transform transition-transform duration-300"
-        >
-          {/* Navigation Items */}
-          {navItems.map((item) =>
-            item.active ? (
-              <li key={item.name}>
-                <button
-                  onClick={() => {
-                    setIsMobileNavVisible(false);
-                    navigate(item.slug);
-                  }}
-                  className="w-full text-left text-white px-4 py-2 rounded-lg bg-gray-800 hover:bg-blue-600 hover:shadow-md transition-all duration-300"
-                >
-                  {item.name}
-                </button>
-              </li>
-            ) : null
-          )}
+        <div className=' relative '>
+          <ul
+            ref={mobileNavRef}
+            className="absolute z-50 w-full flex-col lg:hidden bg-gray-900 p-6 space-y-4 rounded-lg shadow-lg slide-down transform transition-transform duration-300"
+          >
+            {/* Navigation Items */}
+            {navItems.map((item) =>
+              item.active ? (
+                <li key={item.name}>
+                  <button
+                    onClick={() => {
+                      setIsMobileNavVisible(false);
+                      navigate(item.slug);
+                    }}
+                    className="w-full text-left text-white px-4 py-2 rounded-lg bg-gray-800 hover:bg-blue-600 hover:shadow-md transition-all duration-300"
+                  >
+                    {item.name}
+                  </button>
+                </li>
+              ) : null
+            )}
 
-          {/* Authenticated User Actions */}
-          {authStatus && (
-            <>
-              <li>
-                <button
-                  className="flex items-center justify-start space-x-3 w-full bg-gray-800 text-white rounded-lg p-3 hover:bg-red-600 hover:shadow-md transition-all duration-300"
-                  onClick={handleLogout}
-                >
-                  <span className="ml-1">Logout</span>
-                </button>
-              </li>
-              <li className="relative flex items-center justify-start">
-                {/* Profile Button with Dropdown */}
-                <button
-                  onClick={() => setIsDropdownOpen((prev) => !prev)} // Toggles the dropdown
-                  className="flex items-center space-x-3 w-full hover:bg-gray-800 rounded-lg p-3 transition-all duration-300"
-                >
-                  <img
-                    src={userData?.profileImage || "https://via.placeholder.com/150"}
-                    alt="User Profile"
-                    className="w-12 h-12 rounded-full border-2 border-blue-500 shadow-md"
-                  />
-                </button>
+            {/* Authenticated User Actions */}
+            {authStatus && (
+              <>
+                <li onClick={handleLogout}>
+                  <button
+                    className="flex items-center justify-start space-x-3 w-full bg-gray-800 text-white rounded-lg p-3 hover:bg-red-600 hover:shadow-md transition-all duration-300"
+                  >
+                    <span className="ml-1">Logout</span>
+                  </button>
+                </li>
+                <li className="relative flex items-center justify-start">
+                  {/* Profile Button with Dropdown */}
+                  <button
+                    onClick={() => setIsDropdownOpen((prev) => !prev)} // Toggles the dropdown
+                    className="flex items-center space-x-3 w-full hover:bg-gray-800 rounded-lg p-3 transition-all duration-300"
+                  >
+                    <img
+                      src={userData?.profileImage || "https://via.placeholder.com/150"}
+                      alt="User Profile"
+                      className="w-12 h-12 rounded-full border-2 border-blue-500 shadow-md"
+                    />
+                  </button>
 
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <ul className="absolute top-[4.5rem] right-0 w-52 bg-gray-900 border border-gray-700 rounded-xl shadow-lg z-50 text-white divide-y divide-gray-700">
-                    <li
-                      className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-t-xl"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        setIsMobileNavVisible(false);
-                      }}
-                    >
-                      <span>🧑‍💻</span>
-                      <Link to={`/profile/${userData?._id}`} className="text-sm font-medium">
-                        My Profile
-                      </Link>
-                    </li>
-                    <li
-                      className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-b-xl"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        setIsMobileNavVisible(false);
-                      }}
-                    >
-                      <span>👥</span>
-                      <Link to={`/followers/${userData?._id}`} className="text-sm font-medium">
-                        My Followers
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </>
-          )}
+                  {/* Dropdown Menu */}
+                  {isDropdownOpen && (
+                    <ul className="absolute top-[4.5rem] right-0 w-52 bg-gray-900 border border-gray-700 rounded-xl shadow-lg z-50 text-white divide-y divide-gray-700">
+                      <li
+                        className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-t-xl"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          setIsMobileNavVisible(false);
+                        }}
+                      >
+                        <span>🧑‍💻</span>
+                        <Link to={`/profile/${userData?._id}`} className="text-sm font-medium">
+                          My Profile
+                        </Link>
+                      </li>
+                      <li
+                        className="px-5 py-3 flex items-center space-x-2 hover:bg-gray-700 hover:scale-105 transition-transform duration-200 cursor-pointer rounded-b-xl"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          setIsMobileNavVisible(false);
+                        }}
+                      >
+                        <span>👥</span>
+                        <Link to={`/followers/${userData?._id}`} className="text-sm font-medium">
+                          My Followers
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              </>
+            )}
 
-        </ul>
+          </ul>
+        </div>
       )}
-
     </header>
   );
 }
