@@ -9,33 +9,39 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import HomePage from "./Pages/HomePage.jsx";
-import { Login, PostForm } from "./Components/index.js";
-import SearchMovie from "./Pages/SearchMovie.jsx";
-import AddPost from "./Pages/AddPost.jsx";
-import SignUpPage from "./Pages/SignUpPage.jsx";
-import EditPosts from "./Pages/EditPosts.jsx";
-import Post from "./Pages/Post.jsx";
-import AllPosts from "./Pages/AllPosts.jsx";
-import UserProfile from "./Pages/UserProfile.jsx";
-import MyFollowers from "./Pages/MyFollowers.jsx";
-import MyFollowings from "./Pages/MyFollowings.jsx";
+import { lazy } from "react";
+
+const HomePage = lazy(() => import("./Pages/HomePage.jsx"));
+const Login = lazy(() => import("./Components/Login.jsx"));
+const SignUpPage = lazy(() => import("./Pages/SignUpPage.jsx"));
+const SearchMovie = lazy(() => import("./Pages/SearchMovie.jsx"));
+const AddPost = lazy(() => import("./Pages/AddPost.jsx"));
+const EditPosts = lazy(() => import("./Pages/EditPosts.jsx"));
+const Post = lazy(() => import("./Pages/Post.jsx"));
+const AllPosts = lazy(() => import("./Pages/AllPosts.jsx"));
+const UserProfile = lazy(() => import("./Pages/UserProfile.jsx"));
+const MyFollowers = lazy(() => import("./Pages/MyFollowers.jsx"));
+const MyFollowings = lazy(() => import("./Pages/MyFollowings.jsx"));
+const ProtectRoute = lazy(() => import("./utility/ProtectRoute.jsx"));
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" element={<HomePage />} />
+
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/add-post" element={<SearchMovie />} />
-      <Route path="/all-posts" element={<AllPosts />} />
-      <Route path="/edit-post/:postId" element={<EditPosts />} />
-      <Route path="/post/:postId" element={<Post />} />
-      <Route path="/add-content" element={<AddPost />} />
-      <Route path="/profile/:userId" element={<UserProfile />} />
-      <Route path="/followers/:userId" element={<MyFollowers />} />
-      <Route path="/followings/:userId" element={<MyFollowings />} />
+      <Route element={<ProtectRoute />}>
+      <Route path="/" element={<HomePage />} />
+        <Route path="/add-post" element={<SearchMovie />} />
+        <Route path="/all-posts" element={<AllPosts />} />
+        <Route path="/edit-post/:postId" element={<EditPosts />} />
+        <Route path="/post/:postId" element={<Post />} />
+        <Route path="/add-content" element={<AddPost />} />
+        <Route path="/profile/:userId" element={<UserProfile />} />
+        <Route path="/followers/:userId" element={<MyFollowers />} />
+        <Route path="/followings/:userId" element={<MyFollowings />} />
+      </Route>
     </Route>
   )
 );

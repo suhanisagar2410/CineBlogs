@@ -23,20 +23,23 @@ export default function Post() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    
+    console.log("user effect")
     setLoading(true);
     if (postId) {
       getPostById(postId)
         .then((fetchedPost) => {
           fetchedPost.likes.map((user)=>{
-            if(user.userId === userData._id){
+            if(user?.userId === userData?._id){
+              console.log('reached')
               setIsLiked(true)
               setIsDisliked(false)
             }
           })
           fetchedPost.dislikes.map((user)=>{
-            if(user.userId === userData._id){
+            if(user?.userId === userData?._id){
               setIsDisliked(true)
-              setIsLiked(true)
+              setIsLiked(false)
             }
           })
           setPost(fetchedPost);
@@ -44,13 +47,14 @@ export default function Post() {
             checkIsAuthor(fetchedPost);
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error)
           toast.error("Post not found");
           navigate("/");
         })  
         .finally(() => setLoading(false));
     }
-  }, [userHasLiked]);
+  }, [postId, userData, userHasLiked, isLiked, isDisliked]);
 
   const checkIsAuthor = (fetchedPost) => {
     if (userData && fetchedPost.userId._id === userData._id) {
@@ -84,7 +88,9 @@ export default function Post() {
       setUserHasLiked((prev)=> !prev)
       setLoading(false)
   };
-
+console.log(post?.likes)
+console.log(isLiked, 'liked')
+console.log(isDisliked, "disliked")
   if (isLoading) {
     return (
       <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
