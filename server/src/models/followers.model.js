@@ -7,6 +7,25 @@ const followschema = new Schema(
         ref: "User",
         required: true
     },
+    user: {
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      profileImage: {
+        type: String,
+        default: "https://via.placeholder.com/150",
+      },
+    },
     follower: {
       _id: {
         type: Schema.Types.ObjectId,

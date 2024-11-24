@@ -139,6 +139,11 @@ const follow = async (req, res) => {
       return errorResponse(res, "User not found");
     }
 
+    const user = await User.findOne({_id: followId})
+    if (!user) {
+      return errorResponse(res, "User not found");
+    }
+
     const followObj = await Follow.findOne({
       userId: followId,
       "follower._id": follower._id,
@@ -153,6 +158,12 @@ const follow = async (req, res) => {
     } else {
       await Follow.create({
         userId: followId,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          profileImage: user.profileImage || null,
+        },
         follower: {
           _id: follower._id,
           username: follower.username,
@@ -212,11 +223,26 @@ const updateUserProfile = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error updating profile:', error);
-    return catchResponse(res, "updating profile", error.message);
-
+    console.log('Error updating profile:', error);
+    return catchResponse(res, "Error updating profile", error.message)
   }
 };
+  
+const getUserFollowings = async (req, res)=>{
+  try {
+    const userId = req.params.userId
+    if(!mongoose.isValidObjectId(userId)){
+      return errorResponse(res, "Invalid id")
+    }
+
+    const followings = await Follow.find({ 'follower._id': userId });
+    return successResponse({ res, message: "Get followings successfully", data: followings });
+
+  } catch (error) {
+    console.log(error)
+    return catchResponse(res, "Error occured in get followings", error.message)  
+  }
+}
 
 export {
     createUser,
@@ -225,5 +251,6 @@ export {
     getUserById,
     getCurrentUser,
     follow,
-    updateUserProfile
+    updateUserProfile,
+    getUserFollowings
 }

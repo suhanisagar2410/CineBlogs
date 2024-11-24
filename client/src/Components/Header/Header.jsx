@@ -19,7 +19,6 @@ function Header() {
   const mobileNavRef = useRef(null);
 
   const handleLogout = async () => {
-    console.log('clicked, //////////////////////')
     try {
       await logout(dispatch, navigate);
       toast.success("Logout Successfully...", {

@@ -62,6 +62,7 @@ export const updateUserProfile = async (formData, authToken) => {
     );
     return response.data; 
   } catch (error) {
+    console.log(error)
     throw new Error(
       error.response?.data?.message || "Error updating profile"
     );

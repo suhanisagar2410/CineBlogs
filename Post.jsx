@@ -2,21 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
-import { addLike, deletePost, getPostById, addDislike } from "../AppWrite/Apibase.js";
+import { deletePost, getPostById } from "../AppWrite/Apibase.js";
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import the FontAwesomeIcon component
-import { faL, faThumbsDown } from '@fortawesome/free-solid-svg-icons'; // Import the icon you want to use
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 export default function Post() {
   const [post, setPost] = useState(null);
   const [isAuthor, setAuthor] = useState(false);
-  const token = localStorage.getItem('authToken')
+
   const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
   const [userHasLiked, setUserHasLiked] = useState(false);
+  const [userHasDisliked, setUserHasDisliked] = useState(false);
+
   const { postId } = useParams();
-  const [isLiked, setIsLiked] = useState(false)
-  const [isDisliked, setIsDisliked] = useState(false)
   const userStatus = useSelector((state) => state.Auth.status);
   const navigate = useNavigate();
   const userData = useSelector((state) => state.Auth.userData);
@@ -27,19 +28,9 @@ export default function Post() {
     if (postId) {
       getPostById(postId)
         .then((fetchedPost) => {
-          fetchedPost.likes.map((user)=>{
-            if(user.userId === userData._id){
-              setIsLiked(true)
-              setIsDisliked(false)
-            }
-          })
-          fetchedPost.dislikes.map((user)=>{
-            if(user.userId === userData._id){
-              setIsDisliked(true)
-              setIsLiked(true)
-            }
-          })
           setPost(fetchedPost);
+          setLikes(fetchedPost.likes || 0);
+          setDislikes(fetchedPost.dislikes || 0);
           if (userData) {
             checkIsAuthor(fetchedPost);
           }
@@ -47,10 +38,10 @@ export default function Post() {
         .catch(() => {
           toast.error("Post not found");
           navigate("/");
-        })  
+        })
         .finally(() => setLoading(false));
     }
-  }, [userHasLiked]);
+  }, [postId, navigate, userData]);
 
   const checkIsAuthor = (fetchedPost) => {
     if (userData && fetchedPost.userId._id === userData._id) {
@@ -71,18 +62,32 @@ export default function Post() {
       .finally(() => setLoading(false));
   };
 
-  const handleLike = async () => {
-    setLoading(true)
-      const response = await addLike(post?._id, token)
-      setUserHasLiked((prev)=> !prev)
-      setLoading(false)
+  const handleLike = () => {
+    if (userHasLiked) {
+      setLikes((prev) => prev - 1);
+      setUserHasLiked(false);
+    } else {
+      setLikes((prev) => prev + 1);
+      if (userHasDisliked) {
+        setDislikes((prev) => prev - 1);
+        setUserHasDisliked(false);
+      }
+      setUserHasLiked(true);
+    }
   };
 
-  const handleDislike = async () => {
-    setLoading(true)
-      const response = await addDislike( post?._id, token)
-      setUserHasLiked((prev)=> !prev)
-      setLoading(false)
+  const handleDislike = () => {
+    if (userHasDisliked) {
+      setDislikes((prev) => prev - 1);
+      setUserHasDisliked(false);
+    } else {
+      setDislikes((prev) => prev + 1);
+      if (userHasLiked) {
+        setLikes((prev) => prev - 1);
+        setUserHasLiked(false);
+      }
+      setUserHasDisliked(true);
+    }
   };
 
   if (isLoading) {
@@ -187,22 +192,22 @@ export default function Post() {
                     }}
                   >
                     <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
-                    {post?.likes?.length}
+                    {likes}
                   </button>
 
                   <button
-                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform`}
+                    className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
                     onClick={handleDislike}
                     style={{
                       borderRadius: "15px",
                       background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
                       border: "1px solid rgba(255, 255, 255, 0.8)",
                       backdropFilter: "blur(10px)",
-                      color: "white",
+                      color: "white", // Ensures icon and text are white
                     }}
                   >
                     <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-                    {post?.dislikes?.length}
+                    {dislikes}
                   </button>
                 </div>
               )}
@@ -215,14 +220,14 @@ export default function Post() {
         </div>
 
         {/* Like/Dislike Buttons */}
-        <div className="flex relative sm:hidden gap-6 mt-8 justify-center">
+        <div className="flex relative gap-6 mt-8 justify-center">
           <button
             className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
             onClick={handleLike}
             style={{
-              borderRadius: "20px",
-              background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-              border: "1px solid rgba(255, 255, 255, 0.8)",
+              // borderRadius: "10px",
+              // background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+              // border: "1px solid rgba(255, 255, 255, 0.8)",
               backdropFilter: "blur(10px)",
               color: "white", // Green color for the icon and text
             }}
@@ -232,7 +237,7 @@ export default function Post() {
           </button>
 
           <button
-            className={`relative px-3 py-3 text-xl font-bold transition-all transform`}
+            className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasDisliked ? "scale-110" : "hover:scale-105"}`}
             onClick={handleDislike}
             style={{
               borderRadius: "20px",
@@ -243,7 +248,7 @@ export default function Post() {
             }}
           >
             <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-            {post?.dislikes?.length}
+            {dislikes}
           </button>
         </div>
       </div>

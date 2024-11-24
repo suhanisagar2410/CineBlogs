@@ -244,12 +244,14 @@ export default function UserProfile() {
           <div>
             <p className="text-xl font-bold">{userData?.followers?.length || 0}</p>
             <Link  to={`/followers/${userData?._id}`}>
-              <p className="text-sm hover:scale-[1.05] duration-150">Followers</p>
+              <p className="text-sm hover:scale-[1.05] hover:text-blue-500 duration-[0.3]">Followers</p>
             </Link>
           </div>
           <div>
             <p className="text-xl font-bold">{userData?.posts || 0}</p>
-            <p className="text-sm">Posts</p>
+            <Link  to={`/all-posts`}>
+            <p className="text-sm hover:scale-[1.05] hover:text-blue-500 duration-[0.3]">Posts</p>
+            </Link>
           </div>
         </div>
 

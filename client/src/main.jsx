@@ -19,6 +19,7 @@ import Post from "./Pages/Post.jsx";
 import AllPosts from "./Pages/AllPosts.jsx";
 import UserProfile from "./Pages/UserProfile.jsx";
 import MyFollowers from "./Pages/MyFollowers.jsx";
+import MyFollowings from "./Pages/MyFollowings.jsx";
 
 
 const router = createBrowserRouter(
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
       <Route path="/add-content" element={<AddPost />} />
       <Route path="/profile/:userId" element={<UserProfile />} />
       <Route path="/followers/:userId" element={<MyFollowers />} />
+      <Route path="/followings/:userId" element={<MyFollowings />} />
     </Route>
   )
 );

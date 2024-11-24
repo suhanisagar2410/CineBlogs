@@ -1,4 +1,4 @@
-import { createUser, follow, getCurrentUser, getUserById, login, logOut, updateUserProfile } from "../controllers/user.controller.js"
+import { createUser, follow, getCurrentUser, getUserById, getUserFollowings, login, logOut, updateUserProfile } from "../controllers/user.controller.js"
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -10,5 +10,6 @@ userRouter.route("/login").post(login)
 userRouter.route("/logout").post(authenticateToken, logOut)
 userRouter.route("/get-user/:id").get(authenticateToken, getUserById)
 userRouter.route("/current-user").get( authenticateToken, getCurrentUser);
-userRouter.route("/update-profile").put(authenticateToken, upload.single('profileImage'), updateUserProfile);           
+userRouter.route("/update-profile").put(authenticateToken, upload.single('profileImage'), updateUserProfile);
+userRouter.route("/followings/:userId").get(authenticateToken, getUserFollowings);           
 export default userRouter
