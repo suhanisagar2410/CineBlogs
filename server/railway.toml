@@ -1,9 +1,0 @@
-[build]
-builder = "nixpacks"
-buildCommand = "echo building!"
-
-[deploy]
-startCommand = "yarn start"
-healthcheckPath = "/"
-healthcheckTimeout = 100
-restartPolicyType = "never"
