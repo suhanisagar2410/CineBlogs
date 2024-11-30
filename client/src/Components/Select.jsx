@@ -6,7 +6,7 @@ function Select({ options, label, placeholder = "Select an option", error, class
     return (
         <div className="w-full space-y-2">
             {label && (
-                <label htmlFor={id} className="block text-sm font-semibold text-gray-600">
+                <label htmlFor={id} className="block text-sm font-semibold text-white">
                     {label}
                 </label>
             )}
