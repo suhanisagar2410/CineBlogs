@@ -25,7 +25,6 @@ export default function Post() {
 
   useEffect(() => {
 
-    console.log("user effect")
     setLoading(true);
     if (postId) {
       getPostById(postId)
@@ -67,11 +66,25 @@ export default function Post() {
     setLoading(true);
     await deletePost(post._id)
       .then(() => {
-        toast.success("Post deleted successfully!");
+        toast.success("Post deleted successfully", {
+          autoClose: 1000,
+          style: {
+            backgroundColor: "#2e1065",
+            color: "#ffffff",
+          },
+          hideProgressBar: true,
+        });
         navigate("/");
       })
       .catch((error) => {
-        toast.error(error.message || "An error occurred while deleting the post.");
+        toast.success(error.message || "An error occurred while deleting the post.", {
+          autoClose: 1000,
+          style: {
+            backgroundColor: "#2e1065",
+            color: "#ffffff",
+          },
+          hideProgressBar: true,
+        });
       })
       .finally(() => setLoading(false));
   };
@@ -246,7 +259,7 @@ export default function Post() {
               )}
             </div>
 
-            <p className="text-lg text-gray-300 mt-7 px-6">
+            <p className="text-lg text-gray-300 mt-7 px-6 whitespace-pre-wrap">
               {post.content}
             </p>
           </div>
