@@ -45,7 +45,14 @@ function Signup() {
 
         localStorage.setItem("authToken", token);
 
-        toast.success("User created successfully!");
+        toast.success("User created successfully...", {
+          autoClose: 1000,
+          style: {
+            backgroundColor: "#2e1065",
+            color: "#ffffff",
+          },
+          hideProgressBar: true,
+        });
         navigate("/");
       } catch (error) {
         console.error("Signup error:", error);

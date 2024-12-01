@@ -284,7 +284,7 @@ export default function PostForm({ post }) {
                 <Button
                     type="submit"
                     bgColor="bg-teal-500"
-                    className="w-full sm:w-[20rem] py-4 sm:mt-6 rounded-lg text-black shadow-lg transition-transform transform hover:scale-105"
+                    className="w-full sm:w-[20rem] py-4 sm:mt-6 rounded-lg text-black hover:bg-teal-600 shadow-lg transition-transform transform hover:scale-105"
                 >
                     {post ? "Update" : "Submit"}
                 </Button>
