@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
 import { addLike, deletePost, getPostById, addDislike } from "../AppWrite/Apibase.js";
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // Import the FontAwesomeIcon component
-import { faL, faThumbsDown } from '@fortawesome/free-solid-svg-icons'; // Import the icon you want to use
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faL, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp, faShare } from '@fortawesome/free-solid-svg-icons';
-
+import DeletePost from "../Components/DeletePost.jsx";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -60,33 +60,6 @@ export default function Post() {
     if (userData && fetchedPost.userId._id === userData._id) {
       setAuthor(true);
     }
-  };
-
-  const deletePostFunc = async () => {
-    setLoading(true);
-    await deletePost(post._id)
-      .then(() => {
-        toast.success("Post deleted successfully", {
-          autoClose: 1000,
-          style: {
-            backgroundColor: "#2e1065",
-            color: "#ffffff",
-          },
-          hideProgressBar: true,
-        });
-        navigate("/");
-      })
-      .catch((error) => {
-        toast.success(error.message || "An error occurred while deleting the post.", {
-          autoClose: 1000,
-          style: {
-            backgroundColor: "#2e1065",
-            color: "#ffffff",
-          },
-          hideProgressBar: true,
-        });
-      })
-      .finally(() => setLoading(false));
   };
 
   const handleLike = async () => {
@@ -169,12 +142,7 @@ export default function Post() {
               Edit
             </button>
           </Link>
-          <button
-            className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-lg hover:bg-red-700 transition-all duration-300"
-            onClick={deletePostFunc}
-          >
-            Delete
-          </button>
+          <DeletePost post={post} deletePost={deletePost}/>
         </div>
       )}
 

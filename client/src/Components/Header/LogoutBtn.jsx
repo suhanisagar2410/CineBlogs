@@ -1,15 +1,22 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Modal from "react-modal"; // Install via `npm install react-modal`
 import { logout } from "../../AppWrite/Apibase";
 
+Modal.setAppElement("#root"); // Ensure accessibility compliance
+
 function LogoutBtn() {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    setLoading(true);
+    setModalOpen(false); // Close modal on confirm
     try {
       await logout(dispatch, navigate);
       toast.success("Logout Successfully...", {
@@ -20,7 +27,7 @@ function LogoutBtn() {
         },
         hideProgressBar: true,
       });
-      navigate('/login')
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Error logging out. Please try again.", {
@@ -31,16 +38,47 @@ function LogoutBtn() {
         },
         hideProgressBar: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <button
-      className="inline-block px-4 py-2 duration-200 text-white hover:text-blue-500 rounded-full"
-      onClick={handleLogout}
-    >
-      Logout
-    </button>
+    <div>
+      <button
+        className="inline-block px-6 py-2 duration-200 hover:text-blue-500 rounded-full"
+        onClick={() => setModalOpen(true)}
+        disabled={loading}
+      >
+        {loading ? "Processing..." : "Logout"}
+      </button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        className="max-w-md mx-auto my-20 p-6 bg-white rounded-xl shadow-lg relative"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+      >
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Confirm Logout</h2>
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to log out? You will need to log in again to access your account.
+        </p>
+        <div className="flex justify-end space-x-3">
+          <button
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200"
+            onClick={() => setModalOpen(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      </Modal>
+    </div>
   );
 }
 
