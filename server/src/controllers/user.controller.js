@@ -5,7 +5,7 @@ import { Follow } from "../models/followers.model.js"
 import { Post } from "../models/post.model.js"
 import { successResponse, errorResponse, catchResponse, generateAccessToken, bcryptPassCompare, uploadOnCloudinry, deleteImage } from "../utils/functions.js"
 const userValidationSchema = joi.object({
-    username: joi.string().min(3).max(15),
+    username: joi.string().min(3).max(30),
     email: joi.string().email().required(),
     password: joi.string().required().min(4),
 })
