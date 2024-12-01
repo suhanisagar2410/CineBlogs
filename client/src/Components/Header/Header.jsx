@@ -76,17 +76,17 @@ function Header() {
     { name: "Add Post", slug: "/add-post", active: authStatus },
   ];
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (mobileNavRef.current && !mobileNavRef.current.contains(event.target)) {
-        setIsMobileNavVisible(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [mobileNavRef]);
+  // useEffect(() => {
+  //   // function handleClickOutside(event) {
+  //   //   if (mobileNavRef.current && !mobileNavRef.current.contains(event.target)) {
+  //   //     setIsMobileNavVisible(false);
+  //   //   }
+  //   // }
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [mobileNavRef]);
 
   return (
     <header className="py-3 px-6 lg:px-16 shadow bg-transparent text-white relative">
@@ -102,12 +102,17 @@ function Header() {
           </Link>
         </div>
 
-        <button
+        {!isMobileNavVisible ? <button
           className="lg:hidden ml-auto text-[2rem] text-white hover:text-blue-500"
-          onClick={() => setIsMobileNavVisible(!isMobileNavVisible)}
+          onClick={() => setIsMobileNavVisible(true)}
         >
           ☰
-        </button>
+        </button> : <button
+          className="lg:hidden ml-auto text-[1.5rem] text-white hover:text-blue-500"
+          onClick={() => setIsMobileNavVisible(false)}
+        >
+          ✖
+        </button>}
 
         {/* Desktop Navbar Links */}
         <ul className="hidden lg:flex space-x-4 ml-auto bg-transparent">
