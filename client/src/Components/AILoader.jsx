@@ -3,7 +3,7 @@ import { ScaleLoader } from "react-spinners";
 
 export default function AILoader() {
   return (
-    <div className="w-full h-screen flex flex-col justify-start mt-[6rem] items-center bg-gradient-to-b from-black via-[#14061F] to-black text-white">
+    <div className="w-full px-5 h-screen flex flex-col justify-start mt-[6rem] items-center bg-gradient-to-b from-black via-[#14061F] to-black text-white">
       <div className="text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold animate-pulse">
           🤖 Generating Your AI-Powered Content...

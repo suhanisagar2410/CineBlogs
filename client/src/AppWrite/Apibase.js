@@ -92,7 +92,7 @@ export const getAllPostsInHomePage = async (authToken, search, page) => {
     const params = {
       search: search || "",
       page: page || 1,
-      limit: 10,
+      limit: 8,
     };
     
 

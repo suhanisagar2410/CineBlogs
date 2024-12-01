@@ -232,39 +232,55 @@ export default function Post() {
             </p>
           </div>
         </div>
+ 
+        {/* Like/Dislike Buttons Mobile*/}
+        {!isAuthor && (
+              <div className="flex justify-center items-center sm:mr-[5rem] mt-5 gap-12 relative mb-8">
+                <button
+                  className={`flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+                  onClick={handleLike}
+                  style={{
+                    borderRadius: "15px",
+                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                    border: "1px solid rgba(255, 255, 255, 0.8)",
+                    backdropFilter: "blur(10px)",
+                    color: "white", // Green color for the icon and text
+                  }}
+                >
+                  <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
+                  {post?.likes?.length}
+                </button>
 
-        {/* Like/Dislike Buttons */}
-        <div className="flex relative sm:hidden gap-6 mt-8 justify-center">
-          <button
-            className={`relative px-3 py-3 text-xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
-            onClick={handleLike}
-            style={{
-              borderRadius: "20px",
-              background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-              border: "1px solid rgba(255, 255, 255, 0.8)",
-              backdropFilter: "blur(10px)",
-              color: "white", // Green color for the icon and text
-            }}
-          >
-            <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
-            {likes}
-          </button>
+                <button
+                  className={`flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform`}
+                  onClick={handleDislike}
+                  style={{
+                    borderRadius: "15px",
+                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                    border: "1px solid rgba(255, 255, 255, 0.8)",
+                    backdropFilter: "blur(10px)",
+                    color: "white",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
+                  {post?.dislikes?.length}
+                </button>
 
-          <button
-            className={`relative px-3 py-3 text-xl font-bold transition-all transform`}
-            onClick={handleDislike}
-            style={{
-              borderRadius: "20px",
-              background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-              border: "1px solid rgba(255, 255, 255, 0.8)",
-              backdropFilter: "blur(10px)",
-              color: "white", // Ensures icon and text are white
-            }}
-          >
-            <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-            {post?.dislikes?.length}
-          </button>
-        </div>
+                <button
+                  className={`flex justify-center items-center sm:hidden p-3 text-3xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+                  onClick={handleShare}
+                  style={{
+                    borderRadius: "15px",
+                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                    border: "1px solid rgba(255, 255, 255, 0.8)",
+                    backdropFilter: "blur(10px)",
+                    color: "white", // Green color for the icon and text
+                  }}
+                >
+                  <FontAwesomeIcon icon={faShare} style={{ marginRight: '8px' }} />
+                </button>
+              </div>
+            )}
       </div>
     </div>
   ) : null;

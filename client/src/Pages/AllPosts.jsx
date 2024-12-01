@@ -59,7 +59,6 @@ function AllPosts() {
     );
   }
 
-
   if (posts.length === 0 && userStatus == true) {
     return (
       <div className="w-full h-full py-8 mt-4 flex justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black text-center">

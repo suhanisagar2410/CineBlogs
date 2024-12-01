@@ -83,7 +83,7 @@ export default function PostForm({ post }) {
     };
 
     const submit = async (data) => {
-        setAILoading(true);
+       setLoading(true)
         if (data?.content.trim() == '') {
             toast.error("Content cannot be empty. Please write something.", {
                 autoClose: 2000,
@@ -93,6 +93,7 @@ export default function PostForm({ post }) {
                 },
                 hideProgressBar: true,
             });
+            setLoading(false)
             return;
         }
         try {
@@ -167,10 +168,28 @@ export default function PostForm({ post }) {
         return <AILoader />;
     }
 
+    if (isLoading) {
+        return (
+          <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
+            <div className="p-4 w-full flex flex-col justify-center items-center">
+              <h1 className="text-4xl font-semibold text-white">
+                "Patience, the Best Stories Are Worth the Wait."
+              </h1>
+              <p className="text-lg mt-2 text-gray-300">
+                We’re brewing something great! Check back soon for fresh content.
+              </p>
+            </div>
+            <div className="mt-[5rem]">
+              <ScaleLoader color="#ffffff" height={50} />
+            </div>
+          </div>
+        );
+      }
+
     return (
         <form
             onSubmit={handleSubmit(submit)}
-            className="w-full bg-gradient-to-b from-black via-[#14061F] to-black text-white py-5 px-6 rounded-lg shadow-lg"
+            className="w-ful flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black text-white py-5 px-6 rounded-lg shadow-lg"
         >
             {/* AI Modal */}
             {showAIModal && (
@@ -248,7 +267,7 @@ export default function PostForm({ post }) {
             </div>
 
             {/* Content Textarea */}
-            <div className="flex flex-col items-center gap-8 mt-6">
+            <div className="w-full flex flex-col items-center gap-8 mt-6">
                     <textarea
                         className="w-full sm:w-3/4 h-[18rem] p-4 rounded-lg text-gray-800 bg-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-transform transform hover:scale-105"
                         placeholder="Write your content here..."
@@ -274,17 +293,17 @@ export default function PostForm({ post }) {
             </div>
 
             {/* Submit Section */}
-            <div className="w-full flex flex-col sm:flex-row justify-center items-center mt-8">
+            <div className="w-full sm:w-[45rem] flex flex-col sm:flex-row justify-center items-center mt-8">
                 <Select
                     options={["Public", "Private"]}
                     label="Status"
-                    className="w-full mr-5 flex justify-center items-center sm:w-[20rem] bg-gray-300 text-black rounded-lg shadow-md py-3 px-4 hover:scale-105"
+                    className="w-[15rem] sm:mr-5 flex justify-center items-center sm:w-[20rem] bg-gray-300 text-black rounded-lg shadow-md py-3 px-4 hover:scale-105"
                     {...register("status", { required: true })}
                 />
                 <Button
                     type="submit"
                     bgColor="bg-teal-500"
-                    className="w-full sm:w-[20rem] py-4 sm:mt-6 rounded-lg text-black hover:bg-teal-600 shadow-lg transition-transform transform hover:scale-105"
+                    className="w-full sm:w-[20rem] mt-5 py-4 sm:mt-6 rounded-lg text-black hover:bg-teal-600 shadow-lg transition-transform transform hover:scale-105"
                 >
                     {post ? "Update" : "Submit"}
                 </Button>
