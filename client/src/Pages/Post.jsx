@@ -31,7 +31,6 @@ export default function Post() {
         .then((fetchedPost) => {
           fetchedPost.likes.map((user) => {
             if (user?.userId === userData?._id) {
-              console.log('reached')
               setIsLiked(true)
               setIsDisliked(false)
             }
@@ -142,7 +141,7 @@ export default function Post() {
               Edit
             </button>
           </Link>
-          <DeletePost post={post} deletePost={deletePost}/>
+          <DeletePost post={post} deletePost={deletePost} />
         </div>
       )}
 
@@ -159,49 +158,17 @@ export default function Post() {
               />
             </div>
             {!isAuthor && (
-              <div className="sm:flex hidden sm:mr-[5rem] mt-5 gap-5 relative mb-8 justify-center">
-                <button
-                  className={`flex justify-center items-center py-2 text-[1.2rem] font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
-                  onClick={handleLike}
-                  style={{
-                    borderRadius: "15px",
-                    // background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    // border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white", // Green color for the icon and text
-                  }}
-                >
-                  <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
+              <div className="sm:flex hidden justify-start items-center mt-5 ml-5">
+                <button className={`p-3  ${isLiked ? "text-green-500" : "text-gray-400"}`} onClick={handleLike}>
+                  <FontAwesomeIcon className="mr-3" icon={faThumbsUp} /> {/* Adjusted margin-right */}
                   {post?.likes?.length}
                 </button>
-
-                <button
-                  className={`flex justify-center items-center px-3 py-2 text-[1.2rem] font-bold transition-all transform`}
-                  onClick={handleDislike}
-                  style={{
-                    borderRadius: "15px",
-                    // background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    // border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
+                <button className={`p-3  ${isDisliked ? "text-red-500" : "text-gray-400"}`} onClick={handleDislike}>
+                  <FontAwesomeIcon className="mr-3" icon={faThumbsDown} /> {/* Adjusted margin-right */}
                   {post?.dislikes?.length}
                 </button>
-
-                <button
-                  className={`flex justify-center items-center py-2 text-[1.2rem] font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
-                  onClick={handleShare}
-                  style={{
-                    borderRadius: "15px",
-                    // background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    // border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white", // Green color for the icon and text
-                  }}
-                >
-                  <FontAwesomeIcon icon={faShare} style={{ marginRight: '8px' }} />
+                <button className="p-3 text-blue-400" onClick={handleShare}>
+                  <FontAwesomeIcon className="mr-3" icon={faShare} /> {/* Adjusted margin-right */}
                 </button>
               </div>
             )}
@@ -232,55 +199,55 @@ export default function Post() {
             </p>
           </div>
         </div>
- 
+
         {/* Like/Dislike Buttons Mobile*/}
         {!isAuthor && (
-              <div className="flex justify-center items-center sm:mr-[5rem] mt-5 gap-12 relative mb-8">
-                <button
-                  className={`flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
-                  onClick={handleLike}
-                  style={{
-                    borderRadius: "15px",
-                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white", // Green color for the icon and text
-                  }}
-                >
-                  <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
-                  {post?.likes?.length}
-                </button>
+          <div className="flex justify-center items-center sm:mr-[5rem] mt-5 gap-12 relative mb-8">
+            <button
+              className={`flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+              onClick={handleLike}
+              style={{
+                borderRadius: "15px",
+                background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                border: "1px solid rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+                color: "white", // Green color for the icon and text
+              }}
+            >
+              <FontAwesomeIcon icon={faThumbsUp} style={{ marginRight: '8px' }} />
+              {post?.likes?.length}
+            </button>
 
-                <button
-                  className={`flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform`}
-                  onClick={handleDislike}
-                  style={{
-                    borderRadius: "15px",
-                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
-                  {post?.dislikes?.length}
-                </button>
+            <button
+              className={` flex justify-center sm:hidden items-center p-3 text-2xl font-bold transition-all transform`}
+              onClick={handleDislike}
+              style={{
+                borderRadius: "15px",
+                background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                border: "1px solid rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+                color: "white",
+              }}
+            >
+              <FontAwesomeIcon icon={faThumbsDown} style={{ marginRight: '8px' }} />
+              {post?.dislikes?.length}
+            </button>
 
-                <button
-                  className={`flex justify-center items-center sm:hidden p-3 text-3xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
-                  onClick={handleShare}
-                  style={{
-                    borderRadius: "15px",
-                    background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                    border: "1px solid rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    color: "white", // Green color for the icon and text
-                  }}
-                >
-                  <FontAwesomeIcon icon={faShare} style={{ marginRight: '8px' }} />
-                </button>
-              </div>
-            )}
+            <button
+              className={`flex justify-center items-center sm:hidden p-3 text-3xl font-bold transition-all transform ${userHasLiked ? "scale-110" : "hover:scale-105"}`}
+              onClick={handleShare}
+              style={{
+                borderRadius: "15px",
+                background: "linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                border: "1px solid rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+                color: "white", // Green color for the icon and text
+              }}
+            >
+              <FontAwesomeIcon icon={faShare} style={{ marginRight: '8px' }} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   ) : null;

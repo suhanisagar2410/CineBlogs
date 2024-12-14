@@ -134,50 +134,55 @@ const follow = async (req, res) => {
       return errorResponse(res, "You cannot follow yourself");
     }
 
-    const follower = await User.findById(userId);
-    if (!follower) {
+    // Fetch both users in parallel
+    const [follower, user] = await Promise.all([
+      User.findById(userId),
+      User.findById(followId),
+    ]);
+
+    if (!follower || !user) {
       return errorResponse(res, "User not found");
     }
 
-    const user = await User.findOne({_id: followId})
-    if (!user) {
-      return errorResponse(res, "User not found");
-    }
-
-    const followObj = await Follow.findOne({
+    // Check if already following
+    const followExists = await Follow.findOne({
       userId: followId,
-      "follower._id": follower._id,
+      "follower._id": userId,
     });
 
-    if (followObj) {
-      await Follow.findOneAndDelete({
+    if (followExists) {
+      // Unfollow
+      await Follow.deleteOne({
         userId: followId,
-        "follower._id": follower._id,
+        "follower._id": userId,
       });
       return successResponse({ res, message: "Unfollowed successfully", data: {} });
-    } else {
-      await Follow.create({
-        userId: followId,
-        user: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-          profileImage: user.profileImage || null,
-        },
-        follower: {
-          _id: follower._id,
-          username: follower.username,
-          email: follower.email,
-          profileImage: follower.profileImage || null,
-        },
-      });
-      return successResponse({ res, message: "Followed successfully", data: {} });
     }
+
+    // Follow
+    await Follow.create({
+      userId: followId,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        profileImage: user.profileImage || null,
+      },
+      follower: {
+        _id: follower._id,
+        username: follower.username,
+        email: follower.email,
+        profileImage: follower.profileImage || null,
+      },
+    });
+
+    return successResponse({ res, message: "Followed successfully", data: {} });
   } catch (error) {
     console.error(error);
     return catchResponse(res, "Error occurred in following", error.message);
   }
 };
+
 
 const updateUserProfile = async (req, res) => {
   try {

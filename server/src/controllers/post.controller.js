@@ -136,148 +136,151 @@ const deletePost = async (req, res) => {
     }
 }
 
-const addLike = async (req, res)=>{
-    try {
-        const postId = req.params.postId
-        const user = req.user
-        if(!mongoose.isValidObjectId(postId)){
-            return errorResponse(res, "Invalid post id")
-        }
-
-        const dislikeExists = await Post.findOne({
-          _id: postId,
-          dislikes: {
-            $elemMatch: {
-              userId: user._id,
-            },
-          },
-        });
-    
-        if(dislikeExists){
-          await Post.updateOne(
-            { _id: postId },
-            {
-              $pull: {
-                dislikes: { userId: user._id },
-              },
-            }
-          );
-        }
-
-        const likeExists = await Post.findOne({
-          _id: postId,
-          likes: {
-            $elemMatch: {
-              userId: user._id,
-            },
-          },
-        });
-
-        if(likeExists){
-          await Post.updateOne(
-            { _id: postId },
-            {
-              $pull: {
-                likes: { userId: user._id },
-              },
-            }
-          );
-          return successResponse({ res, message: "Like deleted successfully", data: {} });
-        }
-        else{
-          const updatedPost = await Post.updateOne({_id: postId},{
-            $push: {
-              likes: {
-                userId: user._id,
-                profileImage: user.profileImage,
-                email: user.email,
-                username: user.username
-              }
-            }
-          })
-          
-      if(updatedPost.modifiedCount !== 1){
-        return errorResponse(res, "Post not liked")
-      }
-      return successResponse({ res, message: "Liked", data: {} });
-    }
-
-    } catch (error) {
-      console.log(error)
-      return catchResponse(res, "Error occurred in like", error);
-    }
-}
-
-const addDislike = async (req, res)=>{
+const addLike = async (req, res) => {
   try {
-    const postId = req.params.postId
-    const user = req.user
-    if(!mongoose.isValidObjectId(postId)){
-        return errorResponse(res, "Invalid post id")
+    const postId = req.params.postId;
+    const user = req.user;
+
+    if (!mongoose.isValidObjectId(postId)) {
+      return errorResponse(res, "Invalid post ID");
     }
 
-    const likeExists = await Post.findOne({
-      _id: postId,
-      likes: {
-        $elemMatch: {
-          userId: user._id,
-        },
-      },
-    });
-
-    if(likeExists){
-      await Post.updateOne(
-        { _id: postId },
+    const updatedPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      [
         {
-          $pull: {
-            likes: { userId: user._id },
+          $set: {
+            dislikes: {
+              $filter: {
+                input: "$dislikes",
+                as: "dislike",
+                cond: { $ne: ["$$dislike.userId", user._id] },
+              },
+            },
+            likes: {
+              $cond: [
+                {
+                  $in: [user._id, "$likes.userId"],
+                },
+                {
+                  $filter: {
+                    input: "$likes",
+                    as: "like",
+                    cond: { $ne: ["$$like.userId", user._id] },
+                  },
+                },
+                {
+                  $concatArrays: [
+                    "$likes",
+                    [
+                      {
+                        userId: user._id,
+                        profileImage: user.profileImage,
+                        email: user.email,
+                        username: user.username,
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
           },
-        }
-      )}
-
-    const dislikeExists = await Post.findOne({
-      _id: postId,
-      dislikes: {
-        $elemMatch: {
-          userId: user._id,
         },
-      },
-    });
+      ],
+      { new: true }
+    );
 
-    if(dislikeExists){
-      await Post.updateOne(
-        { _id: postId },
-        {
-          $pull: {
-            dislikes: { userId: user._id },
-          },
-        }
-      );
-      return successResponse({ res, message: "Dislike deleted successfully", data: {} });
+    if (!updatedPost) {
+      return errorResponse(res, "Post not found or unable to update");
     }
-    else{
-      const updatedPost = await Post.updateOne({_id: postId},{
-        $push: {
-          dislikes: {
-            userId: user._id,
-            profileImage: user.profileImage,
-            email: user.email,
-            username: user.username
-          }
-        }
-      })
-      
-  if(updatedPost.modifiedCount !== 1){
-    return errorResponse(res, "Post not disliked")
+
+    const isLiked = updatedPost.likes.some((like) => like.userId.equals(user._id));
+
+    const message = isLiked
+      ? "Post liked successfully"
+      : "Like removed successfully";
+
+    return successResponse({ res, message, data: {} });
+  } catch (error) {
+    console.log(error);
+    return catchResponse(res, "Error occurred in like", error);
   }
-  return successResponse({ res, message: "Disliked", data: {} });
-}
+};
 
-} catch (error) {
-  console.log(error)
-  return catchResponse(res, "Error occurred in disliked", error);
-}
-}
+
+const addDislike = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const user = req.user;
+
+    if (!mongoose.isValidObjectId(postId)) {
+      return errorResponse(res, "Invalid post ID");
+    }
+
+    const updatedPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      [
+        {
+          $set: {
+            likes: {
+              $filter: {
+                input: "$likes",
+                as: "like",
+                cond: { $ne: ["$$like.userId", user._id] },
+              },
+            },
+            dislikes: {
+              $cond: [
+                {
+                  $in: [user._id, "$dislikes.userId"],
+                },
+                {
+                  $filter: {
+                    input: "$dislikes",
+                    as: "dislike",
+                    cond: { $ne: ["$$dislike.userId", user._id] },
+                  },
+                },
+                {
+                  $concatArrays: [
+                    "$dislikes",
+                    [
+                      {
+                        userId: user._id,
+                        profileImage: user.profileImage,
+                        email: user.email,
+                        username: user.username,
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+      { new: true }
+    );
+
+    if (!updatedPost) {
+      return errorResponse(res, "Post not found or unable to update");
+    }
+
+    const isDisliked = updatedPost.dislikes.some((dislike) =>
+      dislike.userId.equals(user._id)
+    );
+
+    const message = isDisliked
+      ? "Post disliked successfully"
+      : "Dislike removed successfully";
+
+    return successResponse({ res, message, data: {} });
+  } catch (error) {
+    console.log(error);
+    return catchResponse(res, "Error occurred in dislike", error);
+  }
+};
+
 
 export {
     createPost,
