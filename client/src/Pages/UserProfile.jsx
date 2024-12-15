@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { IconButton, Stack, Avatar, Typography } from '@mui/material';
 import { Edit as EditIcon, Done as DoneIcon, CameraAlt as CameraAltIcon } from '@mui/icons-material';
 import MuiInput from '../utility/CustomeInput';
 import { createFollow, getUserData, updateUserProfile } from '../AppWrite/Apibase';
-import { Login } from "../Store/AuthSlice.js"
+import { Login } from "../Store/AuthSlice.js";
 
 export default function UserProfile() {
   const [userData, setUser] = useState(null);
@@ -23,7 +23,7 @@ export default function UserProfile() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const appUser = useSelector((state) => state.Auth.userData);
 
@@ -33,18 +33,27 @@ export default function UserProfile() {
     { label: 'Bio', name: 'bio', type: 'text' }
   ];
 
+  // Optimized useEffect with debounce using setTimeout
+  useEffect(() => {
+    if (appUser) {
+      const timer = setTimeout(() => {
+        getUser();
+      }, 300); // Adding debounce to avoid multiple rapid calls
+      return () => clearTimeout(timer); // Clean up the timeout on re-renders
+    }
+  }, [userId, appUser, isFollowing, isClicked]);
+
   const getUser = async () => {
-    setLoading(true);
     if (!appUser) return;
     try {
-      const data = await getUserData(userId, authToken)
+      const data = await getUserData(userId, authToken);
       setUser(data.data);
       setBio(data.data?.bio || '');
       setUsername(data.data?.username || '');
       setEmail(data.data?.email || '');
       setIsFollowing(data.data?.followers?.some((follow) => follow.follower._id === appUser?._id) || false);
       setIsAuthor(data.data?._id === appUser?._id);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -56,22 +65,15 @@ export default function UserProfile() {
       setLoading(true);
       const response = await createFollow(userId, authToken);
       setIsFollowing((prev) => !prev);
-      toast.success(response.message, {
-        autoClose: 1000,
-        style: {
-          backgroundColor: "#2e1065",
-          color: "#ffffff",
-        },
-        hideProgressBar: true,
-      });
+      toast.success(response.message);
     } catch (error) {
       setLoading(false);
       console.log(error);
     }
   };
 
-  const handleEdit = () => {
-    setLoading(true);
+  // Memoize handleEdit using useCallback to avoid unnecessary rerenders
+  const handleEdit = useCallback(async () => {
     if (isEdit) {
       setLoading(true);
       const formData = new FormData();
@@ -81,52 +83,33 @@ export default function UserProfile() {
       if (selectedImage) {
         formData.append('profileImage', selectedImage);
       }
-      setLoading(true);
-      updateUserProfile(formData, authToken)
-        .then((response) => {
-          setUser(response.data);
-          if (isAuthor) {
-            dispatch(Login({ user: response.data, token: authToken }));
-          }
-          toast.success("Profile updated successfully!", {
-            autoClose: 1000,
-            style: {
-              backgroundColor: "#2e1065",
-              color: "#ffffff",
-            },
-            hideProgressBar: true,
-          });
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("Error updating profile:", error);
-          setLoading(false);
-          toast.error("Error updating profile!", {
-            autoClose: 1000,
-            style: {
-              backgroundColor: "#2e1065",
-              color: "#ffffff",
-            },
-            hideProgressBar: true,
-          });
-        });
+
+      try {
+        const response = await updateUserProfile(formData, authToken);
+        setUser(response.data);
+        if (isAuthor) {
+          dispatch(Login({ user: response.data, token: authToken }));
+        }
+        toast.success("Profile updated successfully!");
+      } catch (error) {
+        toast.error("Error updating profile!");
+      } finally {
+        setLoading(false);
+      }
     }
     setIsEdit(!isEdit);
-  };
+  }, [isEdit, bio, username, email, selectedImage, authToken, dispatch, isAuthor]);
 
-  const handleFileChange = (e) => {
+  // Memoize selected image handler
+  const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    setLoading(true);
-    if (appUser) {
-      getUser();
-    }
-  }, [userId, appUser, isFollowing, isClicked]);
+  // Memoizing follower count to avoid unnecessary re-renders
+  const followerCount = useMemo(() => userData?.followers?.length || 0, [userData]);
 
   if (isLoading) {
     return (
@@ -146,13 +129,10 @@ export default function UserProfile() {
     );
   }
 
-  if (!isLoading) return (
+  return (
     <div className="bg-transparent min-h-screen flex flex-col items-center py-12 px-4">
-
-      <div className="border-white border-[0.1px] shadow-sm shadow-white  w-full max-w-[40rem] bg-gradient-to-b from-black via-[#12041c] to-black rounded-xl p-8 text-white text-center">
-
-
-        <Stack direct ion="column" alignItems="center">
+      <div className="border-white border-[0.1px] shadow-sm shadow-white w-full max-w-[40rem] bg-gradient-to-b from-black via-[#12041c] to-black rounded-xl p-8 text-white text-center">
+        <Stack direction="column" alignItems="center">
           <div className="relative">
             <Avatar
               src={selectedImage ? URL.createObjectURL(selectedImage) : userData?.profileImage}
@@ -163,6 +143,7 @@ export default function UserProfile() {
                 border: '3px solid #fff',
                 boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
               }}
+              loading="lazy"
             />
             {isEdit && (
               <IconButton
@@ -232,36 +213,37 @@ export default function UserProfile() {
                 <DoneIcon />
               </IconButton>
             ) : (
-              isAuthor ?
+              isAuthor ? (
                 <IconButton onClick={() => setIsEdit(true)} sx={{ mt: 2, color: 'white' }}>
                   <EditIcon />
-                </IconButton> : null
+                </IconButton>
+              ) : null
             )}
           </div>
         </Stack>
 
         <div className="flex justify-around mt-6 text-gray-300">
           <div>
-            <p className="text-xl font-bold">{userData?.followers?.length || 0}</p>
-            <Link  to={`/followers/${userData?._id}`}>
+            <p className="text-xl font-bold">{followerCount}</p>
+            <Link to={`/followers/${userData?._id}`}>
               <p className="text-sm hover:scale-[1.05] hover:text-blue-500 duration-[0.3]">Followers</p>
             </Link>
           </div>
           <div>
-            <p className="text-xl font-bold">{userData?.posts || 0}</p>
-            <Link  to={`/all-posts`}>
-            <p className="text-sm hover:scale-[1.05] hover:text-blue-500 duration-[0.3]">Posts</p>
+            <p className="text-xl font-bold">{userData?.posts?.length || 0}</p>
+            <Link to={`/posts/${userData?._id}`}>
+              <p className="text-sm hover:scale-[1.05] hover:text-blue-500 duration-[0.3]">Posts</p>
             </Link>
           </div>
         </div>
 
-        {!isAuthor && (
+        {appUser && userData && !isAuthor && (
           <button
-            onClick={handleFollow}
-            className="mt-8 px-6 py-2 rounded-full shadow-md transform transition-all duration-300 bg-gradient-to-r from-purple-500 to-indigo-600 hover:bg-indigo-700 hover:scale-105 text-white"
-          >
-            {isFollowing ? 'Unfollow' : 'Follow'}
-          </button>
+          onClick={handleFollow}
+          className="mt-8 px-6 py-2 rounded-full shadow-md transform transition-all duration-300 bg-gradient-to-r from-purple-500 to-indigo-600 hover:bg-indigo-700 hover:scale-105 text-white"
+        >
+          {isFollowing ? 'Unfollow' : 'Follow'}
+        </button>
         )}
       </div>
     </div>
