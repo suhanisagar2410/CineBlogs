@@ -1,57 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { PostCard } from "../Components";
 import { useSelector } from "react-redux";
-import { ScaleLoader } from "react-spinners";
 import { getAllPostsInHomePage } from "../AppWrite/Apibase";
 import SearchBar from "../utility/SearchBar";
 
 function HomePage() {
-  const [posts, setPosts] = useState([]); 
-  const [isLoading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPosts, setTotalPosts] = useState(0); 
-  const [timer, setTimer] = useState(null);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const observerRef = useRef(null); // Sentinel for infinite scroll
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    
-    if (timer) {
-      clearTimeout(timer);
-    }
-
-    const newTimer = setTimeout(() => {
-      setCurrentPage(1);
-      setPosts([]);
-      fetchPosts(1, e.target.value); 
-    }, 3000); 
-
-    setTimer(newTimer);
+    const query = e.target.value;
+    setSearchQuery(query);
+    setCurrentPage(1);
+    setPosts([]);
+    fetchPosts(1, query);
   };
 
   const fetchPosts = async (page = 1, search = "") => {
-    setLoading(true);
     const authToken = localStorage.getItem("authToken");
     try {
-      const { posts, postCount } = await getAllPostsInHomePage(authToken, search, page);
-      setPosts((prevPosts) => [...prevPosts, ...posts]);
+      const { posts: newPosts, postCount } = await getAllPostsInHomePage(authToken, search, page);
+      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
       setTotalPosts(postCount);
     } catch (error) {
       console.error("Error fetching posts:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPosts(currentPage, searchQuery);
-  }, []); 
+  }, []); // Initial fetch
 
-  const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage); 
-    fetchPosts(nextPage, searchQuery); 
-  };
+  // Infinite Scroll Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && posts.length < totalPosts) {
+          const nextPage = currentPage + 1;
+          setCurrentPage(nextPage);
+          fetchPosts(nextPage, searchQuery);
+        }
+      },
+      { threshold: 1.0 } // Trigger when the sentinel is fully visible
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [currentPage, searchQuery, posts, totalPosts]); // Dependencies
 
   const handleClearSearch = () => {
     setSearchQuery("");
@@ -61,24 +66,6 @@ function HomePage() {
   };
 
   const userStatus = useSelector((state) => state.Auth.status);
-
-  if (isLoading) {
-    return (
-      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
-        <div className="p-4 w-full flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-semibold text-white">
-            "Patience, the Best Stories Are Worth the Wait."
-          </h1>
-          <p className="text-lg mt-2 text-gray-300">
-            We’re brewing something great! Check back soon for fresh content.
-          </p>
-        </div>
-        <div className="mt-[5rem]">
-          <ScaleLoader color="#ffffff" height={50} />
-        </div>
-      </div>
-    );
-  }
 
   if (posts.length === 0 && userStatus !== true) {
     return (
@@ -125,16 +112,8 @@ function HomePage() {
           </div>
         ))}
       </div>
-      {posts.length < totalPosts && (
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={handleLoadMore}
-             className="load-more-btn"
-          >
-            Load More
-          </button>
-        </div>
-      )}
+      {/* Sentinel div for infinite scroll */}
+      <div ref={observerRef} className="w-full h-16" />
     </div>
   );
 }

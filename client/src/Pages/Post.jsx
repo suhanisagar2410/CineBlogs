@@ -48,7 +48,7 @@ export default function Post() {
         })
         .catch((error) => {
           console.log(error)
-          toast.error("Post not found");
+          // toast.error("Post not found");
           navigate("/");
         })
         .finally(() => setLoading(false));
