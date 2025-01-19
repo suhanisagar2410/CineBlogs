@@ -111,7 +111,8 @@ const getAllPosts = async (req, res) => {
   
       const posts = await Post.find(filters)
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .sort({ createdAt: -1 })
       if (!posts)
         return res.json({
           error: `Post Not Found By Filters`,
