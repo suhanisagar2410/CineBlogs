@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ScaleLoader } from "react-spinners";
@@ -16,7 +16,6 @@ export default function Post() {
   const [likes, setLikes] = useState(0);
   const [userHasLiked, setUserHasLiked] = useState(false);
   const { postId } = useParams();
-  const [isLiked, setIsLiked] = useState(false)
   const [isDisliked, setIsDisliked] = useState(false)
   const userStatus = useSelector((state) => state.Auth.status);
   const navigate = useNavigate();
@@ -31,14 +30,12 @@ export default function Post() {
         .then((fetchedPost) => {
           fetchedPost.likes.map((user) => {
             if (user?.userId === userData?._id) {
-              setIsLiked(true)
-              setIsDisliked(false)
+              setUserHasLiked(true);
             }
           })
           fetchedPost.dislikes.map((user) => {
             if (user?.userId === userData?._id) {
               setIsDisliked(true)
-              setIsLiked(false)
             }
           })
           setPost(fetchedPost);
@@ -53,7 +50,7 @@ export default function Post() {
         })
         .finally(() => setLoading(false));
     }
-  }, [postId, userData, userHasLiked, isLiked, isDisliked]);
+  }, [postId, userData]);
 
   const checkIsAuthor = (fetchedPost) => {
     if (userData && fetchedPost.userId._id === userData._id) {
@@ -61,20 +58,75 @@ export default function Post() {
     }
   };
 
+  const saveLikesInDatabase = async (postId, isPostLiked, trial = 0) => {
+    if (trial === 3) {
+      alert('Error occured while updating content');
+      // Revert state that is updated on like operation
+      updateStateOnLike(!isPostLiked);
+    }
+    if (trial < 3) {
+      try {
+        await addLike(postId, token);
+      } catch (err) {
+        saveLikesInDatabase(postId, isPostLiked, ++trial);
+      }
+    }
+  };
+
+  const saveDislikesInDatabase = async (postId, isPostDisliked, trial = 0) => {
+    if (trial === 3) {
+      alert('Error occured while updating content');
+      // Revert state that is updated on dislike operation
+      updateStateOnDislike(!isPostDisliked);
+    }
+    if (trial < 3) {
+      try {
+        await addDislike(postId, token);
+      } catch (err) {
+        saveDislikesInDatabase(postId, isPostDisliked, ++trial);
+      }
+    }
+  };
+
+  const updateStateOnLike = (isPostLiked)=> {
+    setPost(post => {
+      if (isPostLiked) {
+        post.likes.push({ userId: userData?._id });
+      } else {
+        post.likes = post.likes.filter(item => item.userId !== userData?._id);
+      }
+      return post;
+    })
+    setUserHasLiked((prev) => !prev);
+  };
+
+  const updateStateOnDislike = (isPostDisliked)=> {
+    setPost(post => {
+      if (isPostDisliked) {
+        post.dislikes.push({ userId: userData?._id });
+      } else {
+        post.dislikes = post.dislikes.filter(item => item.userId !== userData?._id);
+      }
+      return post;
+    })
+    setIsDisliked((prev) => !prev);
+  };
+
   const handleLike = async () => {
-    setLoading(true)
-    const response = await addLike(post?._id, token)
-    setUserHasLiked((prev) => !prev)
-    setLoading(false)
+    saveLikesInDatabase(post?._id, !userHasLiked);
+    updateStateOnLike(!userHasLiked);
+    if(isDisliked){
+      updateStateOnDislike(false);
+    }
   };
 
   const handleDislike = async () => {
-    setLoading(true)
-    const response = await addDislike(post?._id, token)
-    setUserHasLiked((prev) => !prev)
-    setLoading(false)
+    saveDislikesInDatabase(post?._id, !isDisliked);
+    updateStateOnDislike(!isDisliked);
+    if(userHasLiked) {
+      updateStateOnLike(false);
+    }
   };
-
 
   const handleShare = async () => {
     try {
@@ -159,7 +211,7 @@ export default function Post() {
             </div>
             {!isAuthor && (
               <div className="sm:flex hidden justify-start items-center mt-5 ml-5">
-                <button className={`p-3  ${isLiked ? "text-green-500" : "text-gray-400"}`} onClick={handleLike}>
+                <button className={`p-3  ${userHasLiked ? "text-green-500" : "text-gray-400"}`} onClick={handleLike}>
                   <FontAwesomeIcon className="mr-3" icon={faThumbsUp} /> {/* Adjusted margin-right */}
                   {post?.likes?.length}
                 </button>
