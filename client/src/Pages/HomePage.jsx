@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { PostCard } from "../Components";
 import { useSelector } from "react-redux";
 import { getAllPostsInHomePage } from "../AppWrite/Apibase";
 import SearchBar from "../utility/SearchBar";
+import { ScaleLoader } from "react-spinners";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
-  const [loading, setLoading] = useState(false); // Loading state for button
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const postsPerPage = 8; // Number of posts per request
+  const observerRef = useRef(null);
+  const postsPerPage = 8;
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
@@ -23,7 +26,9 @@ function HomePage() {
 
   const fetchPosts = async (page = 1, search = "") => {
     const authToken = localStorage.getItem("authToken");
-    setLoading(true);
+    if (page === 1) setLoading(true);
+    else setLoadingMore(true);
+
     try {
       const { posts: newPosts, postCount } = await getAllPostsInHomePage(authToken, search, page, postsPerPage);
       setPosts((prevPosts) => (page === 1 ? newPosts : [...prevPosts, ...newPosts]));
@@ -31,18 +36,45 @@ function HomePage() {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
+
     setLoading(false);
+    setLoadingMore(false);
   };
 
   useEffect(() => {
-    fetchPosts(currentPage, searchQuery);
-  }, []); // Initial fetch
+    fetchPosts(1, searchQuery);
+  }, []);
 
-  const loadMorePosts = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
-    fetchPosts(nextPage, searchQuery);
-  };
+  const loadMorePosts = useCallback(() => {
+    if (!loadingMore && posts.length < totalPosts) {
+      setCurrentPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        fetchPosts(nextPage, searchQuery);
+        return nextPage;
+      });
+    }
+  }, [loadingMore, posts.length, totalPosts, searchQuery]);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMorePosts();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    const observerTarget = document.getElementById("loadMoreTrigger");
+    if (observerTarget) observerRef.current.observe(observerTarget);
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [loadMorePosts]);
 
   const handleClearSearch = () => {
     setSearchQuery("");
@@ -53,18 +85,19 @@ function HomePage() {
 
   const userStatus = useSelector((state) => state.Auth.status);
 
-  if (posts.length === 0 && userStatus !== true) {
+  if (loading) {
     return (
-      <div className="w-full py-12 mt-4 text-center">
-        <div className="flex flex-wrap justify-center">
-          <div className="p-4 w-full">
-            <h1 className="text-4xl font-bold text-white tracking-tight">
-              "Unlock a World of Stories, One Post at a Time."
-            </h1>
-            <p className="text-lg mt-2 text-gray-300">
-              We’re brewing something great! Check back soon for fresh content.
-            </p>
-          </div>
+      <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">
+        <div className="p-4 w-full flex flex-col justify-center items-center">
+          <h1 className="text-4xl font-semibold text-white">
+            "Patience, the Best Stories Are Worth the Wait."
+          </h1>
+          <p className="text-lg mt-2 text-gray-300">
+            We’re brewing something great! Check back soon for fresh content.
+          </p>
+        </div>
+        <div className='mt-[5rem]'>
+          <ScaleLoader color="#ffffff" height={50} />
         </div>
       </div>
     );
@@ -88,6 +121,7 @@ function HomePage() {
           you’ve never seen before.
         </p>
       </div>
+
       <div className="sm:ml-5 w-full h-full flex flex-wrap sm:justify-center sm:items-center justify-center items-center gap-3 transition-all duration-500">
         {posts?.map((post) => (
           <div
@@ -97,23 +131,19 @@ function HomePage() {
             <PostCard {...post} />
           </div>
         ))}
+
+        {/* Black Skeleton Cards as placeholders */}
+        {loadingMore &&
+          Array.from({ length: postsPerPage }).map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="p-6 w-full sm:w-[15rem] lg:w-[15rem] xl:w-[15rem] bg-black rounded-lg h-[300px] animate-pulse"
+            />
+          ))}
       </div>
 
-      {/* Load More Button & Loader */}
-      {posts.length < totalPosts && (
-        <div className="w-full flex justify-center mt-6">
-          {loading ? (
-            <div className="text-white text-lg">Loading...</div>
-          ) : (
-            <button
-              onClick={loadMorePosts}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
-            >
-              Load More
-            </button>
-          )}
-        </div>
-      )}
+      {/* Invisible Load More Trigger */}
+      {posts.length < totalPosts && <div id="loadMoreTrigger" className="w-full h-10 mt-6"></div>}
     </div>
   );
 }
