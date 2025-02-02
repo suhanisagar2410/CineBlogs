@@ -62,12 +62,16 @@ export default function UserProfile() {
 
   const handleFollow = async () => {
     try {
-      setLoading(true);
-      const response = await createFollow(userId, authToken);
+      createFollow(userId, authToken);
       setIsFollowing((prev) => !prev);
-      toast.success(response.message);
+      if(!isFollowing) {
+        // toast.success("Followed successfully!");
+      }
+      else {
+        // toast.success("Unfollowed successfully!");
+      }
+ 
     } catch (error) {
-      setLoading(false);
       console.log(error);
     }
   };
@@ -107,7 +111,7 @@ export default function UserProfile() {
       setSelectedImage(file);
     }
   }, []);
-
+  console.log(userData);
   // Memoizing follower count to avoid unnecessary re-renders
   const followerCount = useMemo(() => userData?.followers?.length || 0, [userData]);
 

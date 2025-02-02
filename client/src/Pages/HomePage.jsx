@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { PostCard } from "../Components";
 import { useSelector } from "react-redux";
 import { getAllPostsInHomePage } from "../AppWrite/Apibase";
@@ -9,7 +9,9 @@ function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
-  const observerRef = useRef(null); // Sentinel for infinite scroll
+  const [loading, setLoading] = useState(false); // Loading state for button
+
+  const postsPerPage = 8; // Number of posts per request
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
@@ -21,42 +23,26 @@ function HomePage() {
 
   const fetchPosts = async (page = 1, search = "") => {
     const authToken = localStorage.getItem("authToken");
+    setLoading(true);
     try {
-      const { posts: newPosts, postCount } = await getAllPostsInHomePage(authToken, search, page);
-      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+      const { posts: newPosts, postCount } = await getAllPostsInHomePage(authToken, search, page, postsPerPage);
+      setPosts((prevPosts) => (page === 1 ? newPosts : [...prevPosts, ...newPosts]));
       setTotalPosts(postCount);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchPosts(currentPage, searchQuery);
   }, []); // Initial fetch
 
-  // Infinite Scroll Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && posts.length < totalPosts) {
-          const nextPage = currentPage + 1;
-          setCurrentPage(nextPage);
-          fetchPosts(nextPage, searchQuery);
-        }
-      },
-      { threshold: 1.0 } // Trigger when the sentinel is fully visible
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [currentPage, searchQuery, posts, totalPosts]); // Dependencies
+  const loadMorePosts = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchPosts(nextPage, searchQuery);
+  };
 
   const handleClearSearch = () => {
     setSearchQuery("");
@@ -112,8 +98,22 @@ function HomePage() {
           </div>
         ))}
       </div>
-      {/* Sentinel div for infinite scroll */}
-      <div ref={observerRef} className="w-full h-16" />
+
+      {/* Load More Button & Loader */}
+      {posts.length < totalPosts && (
+        <div className="w-full flex justify-center mt-6">
+          {loading ? (
+            <div className="text-white text-lg">Loading...</div>
+          ) : (
+            <button
+              onClick={loadMorePosts}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+            >
+              Load More
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -65,6 +65,7 @@ const router = createBrowserRouter(
         <Route path="/all-posts" element={<AllPosts />} />
         <Route path="/edit-post/:postId" element={<EditPosts />} />
         <Route path="/post/:postId" element={<Post />} />
+        <Route path="/posts/:userId" element={<AllPosts />} />
         <Route path="/add-content" element={<AddPost />} />
         <Route path="/profile/:userId" element={<UserProfile />} />
         <Route path="/followers/:userId" element={<MyFollowers />} />
