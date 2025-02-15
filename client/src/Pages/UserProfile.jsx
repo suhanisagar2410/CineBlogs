@@ -33,13 +33,13 @@ export default function UserProfile() {
     { label: 'Bio', name: 'bio', type: 'text' }
   ];
 
-  // Optimized useEffect with debounce using setTimeout
+  // Debounce user data fetching
   useEffect(() => {
     if (appUser) {
       const timer = setTimeout(() => {
         getUser();
-      }, 300); // Adding debounce to avoid multiple rapid calls
-      return () => clearTimeout(timer); // Clean up the timeout on re-renders
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [userId, appUser, isFollowing, isClicked]);
 
@@ -62,21 +62,24 @@ export default function UserProfile() {
 
   const handleFollow = async () => {
     try {
-      createFollow(userId, authToken);
       setIsFollowing((prev) => !prev);
-      if(!isFollowing) {
-        // toast.success("Followed successfully!");
-      }
-      else {
-        // toast.success("Unfollowed successfully!");
-      }
- 
+      setUser((prevUserData) => {
+        const newFollowerCount = prevUserData.followers.length + (isFollowing ? -1 : 1);
+        return { ...prevUserData, followers: Array(newFollowerCount).fill({}) };
+      });
+
+      await createFollow(userId, authToken);
     } catch (error) {
-      console.log(error);
+      setIsFollowing((prev) => !prev);
+      setUser((prevUserData) => {
+        const revertedFollowerCount = prevUserData.followers.length + (isFollowing ? 1 : -1);
+        return { ...prevUserData, followers: Array(revertedFollowerCount).fill({}) };
+      });
+      toast.error("Error updating follow status.");
     }
   };
+  
 
-  // Memoize handleEdit using useCallback to avoid unnecessary rerenders
   const handleEdit = useCallback(async () => {
     if (isEdit) {
       setLoading(true);
@@ -104,15 +107,13 @@ export default function UserProfile() {
     setIsEdit(!isEdit);
   }, [isEdit, bio, username, email, selectedImage, authToken, dispatch, isAuthor]);
 
-  // Memoize selected image handler
   const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
     }
   }, []);
-  console.log(userData);
-  // Memoizing follower count to avoid unnecessary re-renders
+
   const followerCount = useMemo(() => userData?.followers?.length || 0, [userData]);
 
   if (isLoading) {
@@ -183,32 +184,20 @@ export default function UserProfile() {
                   }}
                   sx={{
                     mb: 2,
-                    '& .MuiInputBase-input': {
-                      color: 'white',
-                    },
-                    '& .MuiInputLabel-root': {
-                      color: 'white',
-                    },
+                    '& .MuiInputBase-input': { color: 'white' },
+                    '& .MuiInputLabel-root': { color: 'white' },
                     '& .MuiOutlinedInput-root': {
-                      '&.Mui-focused': {
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: 'white',
-                        },
-                        '& .MuiInputLabel-root': {
-                          color: 'white',
-                        },
-                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+                      '&.Mui-focused .MuiInputLabel-root': { color: 'white' },
                     },
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
                   }}
                 />
               ) : (
-                <Typography key={name} className="text-lg text-gray-300">{name === 'username' ? username : name === 'email' ? email : bio}</Typography>
+                <Typography key={name} className="text-lg text-gray-300">
+                  {name === 'username' ? username : name === 'email' ? email : bio}
+                </Typography>
               )
             ))}
             <Typography className="text-gray-400">Joined: {new Date(userData?.createdAt).toLocaleDateString()}</Typography>
@@ -217,11 +206,11 @@ export default function UserProfile() {
                 <DoneIcon />
               </IconButton>
             ) : (
-              isAuthor ? (
+              isAuthor && (
                 <IconButton onClick={() => setIsEdit(true)} sx={{ mt: 2, color: 'white' }}>
                   <EditIcon />
                 </IconButton>
-              ) : null
+              )
             )}
           </div>
         </Stack>
@@ -243,11 +232,11 @@ export default function UserProfile() {
 
         {appUser && userData && !isAuthor && (
           <button
-          onClick={handleFollow}
-          className="mt-8 px-6 py-2 rounded-full shadow-md transform transition-all duration-300 bg-gradient-to-r from-purple-500 to-indigo-600 hover:bg-indigo-700 hover:scale-105 text-white"
-        >
-          {isFollowing ? 'Unfollow' : 'Follow'}
-        </button>
+            onClick={handleFollow}
+            className="mt-8 px-6 py-2 rounded-full shadow-md transform transition-all duration-300 bg-gradient-to-r from-purple-500 to-indigo-600 hover:bg-indigo-700 hover:scale-105 text-white"
+          >
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </button>
         )}
       </div>
     </div>

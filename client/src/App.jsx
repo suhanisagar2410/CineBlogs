@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import './App.css'
 import {Login, Logout} from "./Store/AuthSlice"
 import { Footer, Header } from './Components'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
@@ -13,9 +12,8 @@ const apiBaseUrl = import.meta.env.VITE_REACT_APP_API_BASE_URL;
 
 function App() {
   const [loading, setLoading] = useState(false)
-  
   const dispatch = useDispatch()
-    
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
@@ -31,10 +29,12 @@ function App() {
           }
         })
         .catch((error) => {
+          navigate('/login');
           console.error('Error fetching user data:', error);  
         })
         .finally(() => setLoading(false));
     } else {
+      navigate('/login');
       dispatch(Logout());
       setLoading(false);
     }
