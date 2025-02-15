@@ -60,6 +60,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUpPage />} />
+      <Route element = {<ProtectRoute/>}>
         <Route path="/" element={<HomePage />} />
         <Route path="/add-post" element={<SearchMovie />} />
         <Route path="/all-posts" element={<AllPosts />} />
@@ -70,6 +71,7 @@ const router = createBrowserRouter(
         <Route path="/profile/:userId" element={<UserProfile />} />
         <Route path="/followers/:userId" element={<MyFollowers />} />
         <Route path="/followings/:userId" element={<MyFollowings />} />
+      </Route>
     </Route>
   )
 );
