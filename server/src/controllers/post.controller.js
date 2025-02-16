@@ -89,6 +89,20 @@ const getPostById = async (req, res) => {
   }
 };
 
+const getAllPostsById = async (req, res) => {
+  
+  try {
+    const { userId } = req.params;
+
+    const post = await Post.find({userId}, 'image');
+
+    return successResponse({ res, message: "Posts found successfully", data: post });
+
+  } catch (error) {
+    return catchResponse(res, "Error occurred while fetching posts", error.message);
+  }
+};
+
 const getAllPosts = async (req, res) => {
     try {
       const category = req.query.category;
@@ -107,14 +121,13 @@ const getAllPosts = async (req, res) => {
           { category: { $regex: regex } }
         ];
   
-      const postCount = (await Post.find(filters)).length;
-  
+      const postCount = await Post.countDocuments(filters);
       const posts = await Post.find(filters)
         .skip((page - 1) * limit)
         .limit(limit)
         .sort({ createdAt: -1 })
       if (!posts)
-        return res.json({
+        return res.json({ 
           error: `Post Not Found By Filters`,
         });
   
@@ -290,6 +303,7 @@ export {
     updatePost,
     deletePost,
     getPostById,
+    getAllPostsById,
     addLike,
     addDislike
 }

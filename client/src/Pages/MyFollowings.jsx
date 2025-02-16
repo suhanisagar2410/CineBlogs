@@ -30,7 +30,6 @@ const MyFollowings = () => {
       useEffect(() => {
           getUser();
       }, [userId]);
-      console.log(followings)
       if (isLoading) {
         return (
           <div className="w-full flex flex-col justify-center items-center bg-gradient-to-b from-black via-[#14061F] to-black py-12">

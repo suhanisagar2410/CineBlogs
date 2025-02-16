@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { PostCard } from "../Components";
 import { useSelector } from "react-redux";
 import { getAllPostsByUser } from "../AppWrite/Apibase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ScaleLoader } from "react-spinners";
 
 function AllPosts() {
+  const { userId } = useParams();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate()
@@ -16,7 +17,7 @@ function AllPosts() {
   const getPosts = async () => {
     setIsLoading(true);
     try {
-      const response = await getAllPostsByUser(authToken);
+      const response = await getAllPostsByUser(authToken, userId);
       if (response) {
         setPosts(response);
       } else {

@@ -12,16 +12,22 @@ function HomePage() {
   const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-
+  const [timer, setTimer] = useState(null);
   const observerRef = useRef(null);
   const postsPerPage = 8;
 
   const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    setCurrentPage(1);
-    setPosts([]);
-    fetchPosts(1, query);
+    setSearchQuery(e.target.value);
+    
+    if (timer) {
+      clearTimeout(timer);
+    }
+    const newTimer = setTimeout(() => {
+      setCurrentPage(1);
+      setPosts([]);
+      fetchPosts(1, e.target.value); 
+    }, 1000); 
+    setTimer(newTimer);
   };
 
   const fetchPosts = async (page = 1, search = "") => {

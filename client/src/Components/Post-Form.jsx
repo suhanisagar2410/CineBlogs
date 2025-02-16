@@ -49,7 +49,6 @@ export default function PostForm({ post }) {
         try {
             const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_AI_KEY);
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            console.log(sentiment)
             const prompt = `Write a ${sentiment} review for the movie "${movie?.Title || post?.title}", assuming a rating of ${rating} out of 5 stars, without adding stars into content and make content simpler in min 150 words, make content beautiful with little emojis.`;
             const result = await model.generateContent(prompt);
 
@@ -120,7 +119,6 @@ export default function PostForm({ post }) {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                console.log(response)
                 toast.success("Post updated successfully...", {
                     autoClose: 1000,
                     style: {
